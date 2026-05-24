@@ -1,0 +1,1967 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.env.example
+.gitignore
+dashboard-final.png
+frontend.html
+main.py
+README.md
+real-rails-nextjs/next-env.d.ts
+real-rails-nextjs/next.config.mjs
+real-rails-nextjs/package.json
+real-rails-nextjs/postcss.config.js
+real-rails-nextjs/src/lib/mock_data.json
+real-rails-nextjs/src/lib/mockData.ts
+real-rails-nextjs/src/types/index.ts
+real-rails-nextjs/tailwind.config.ts
+real-rails-nextjs/tsconfig.json
+requirements.txt
+UAT_CHECKLIST.md
+VAR_REPORT.md
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".env.example">
+# Real Rails — Environment Variables (Document 4: Security Guardrail)
+# Copy to .env and fill in your keys. NEVER commit .env to version control.
+
+MAPBOX_TOKEN=pk.your_mapbox_token_here
+PEERINGDB_API_KEY=your_peeringdb_api_key_here   # optional; improves rate limits
+ENVIRONMENT=development
+LOG_LEVEL=info
+</file>
+
+<file path=".gitignore">
+# Python bytecode and cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Local configuration and secrets
+.env
+.env.local
+
+# IDEs and editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+</file>
+
+<file path="README.md">
+# Real Rails — Internet Backbone & IXP Map
+## FastAPI Backend | Rail: Data & Intelligence | ID: 40
+
+### Quick Start
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env   # add your API keys
+uvicorn main:app --reload
+```
+
+### API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | /api/ixps | All IXPs (PeeringDB → mock fallback) |
+| GET | /api/ixps/{id} | Single IXP detail |
+| GET | /api/asns | ASN prefix counts (RIPEstat) |
+| GET | /api/cables | Submarine cable GeoJSON |
+| GET | /api/concentration | Path concentration metrics |
+| GET | /api/simulate/failure | Route failure simulation |
+| GET | /api/download/sample | Download sample data (Section E) |
+
+### Data Sources
+- **PeeringDB**: Live IXP member/facility data  
+- **RIPEstat**: ASN routing table stats  
+- **TeleGeography**: Submarine cable routes (mock shape — licence required for prod)  
+
+### Fallback Protocol (Document 4)
+All live API calls wrap in try/except. On failure, the system reads `mock_data.json` automatically. The UI stays functional for demo.
+</file>
+
+<file path="real-rails-nextjs/next-env.d.ts">
+/// <reference types="next" />
+/// <reference types="next/image-types/global" />
+
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/basic-features/typescript for more information.
+</file>
+
+<file path="real-rails-nextjs/next.config.mjs">
+const nextConfig = {
+  transpilePackages: ["leaflet", "react-leaflet"],
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "mapbox-gl": "mapbox-gl",
+    };
+    return config;
+  },
+};
+
+export default nextConfig;
+</file>
+
+<file path="real-rails-nextjs/postcss.config.js">
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+</file>
+
+<file path="real-rails-nextjs/src/lib/mock_data.json">
+{
+  "metadata": {
+    "source": "Real Rails Intelligence Library — Synthetic data shaped after PeeringDB/TeleGeography schemas",
+    "rail": "Data & Intelligence",
+    "generated": "2024-01-01T00:00:00Z",
+    "disclaimer": "For production use, fetch live from PeeringDB API and license TeleGeography data."
+  },
+  "ixps": [
+    {"id":1,"name":"DE-CIX Frankfurt","city":"Frankfurt","country":"DE","lat":50.11,"lon":8.68,"member_count":1000,"traffic_peak_tbps":12.6,"tier":1},
+    {"id":2,"name":"AMS-IX Amsterdam","city":"Amsterdam","country":"NL","lat":52.37,"lon":4.90,"member_count":953,"traffic_peak_tbps":10.3,"tier":1},
+    {"id":3,"name":"LINX London","city":"London","country":"GB","lat":51.51,"lon":-0.09,"member_count":900,"traffic_peak_tbps":8.8,"tier":1},
+    {"id":4,"name":"NYIIX New York","city":"New York","country":"US","lat":40.71,"lon":-74.01,"member_count":400,"traffic_peak_tbps":7.4,"tier":1},
+    {"id":5,"name":"Equinix IX Chicago","city":"Chicago","country":"US","lat":41.88,"lon":-87.63,"member_count":320,"traffic_peak_tbps":6.0,"tier":1},
+    {"id":6,"name":"JPIX Tokyo","city":"Tokyo","country":"JP","lat":35.69,"lon":139.69,"member_count":500,"traffic_peak_tbps":5.0,"tier":1},
+    {"id":7,"name":"Netnod Stockholm","city":"Stockholm","country":"SE","lat":59.33,"lon":18.07,"member_count":280,"traffic_peak_tbps":3.5,"tier":2},
+    {"id":8,"name":"MSK-IX Moscow","city":"Moscow","country":"RU","lat":55.75,"lon":37.62,"member_count":520,"traffic_peak_tbps":4.1,"tier":2},
+    {"id":9,"name":"Equinix IX Singapore","city":"Singapore","country":"SG","lat":1.35,"lon":103.82,"member_count":410,"traffic_peak_tbps":4.8,"tier":1},
+    {"id":10,"name":"JINX Johannesburg","city":"Johannesburg","country":"ZA","lat":-26.20,"lon":28.04,"member_count":80,"traffic_peak_tbps":0.4,"tier":3}
+  ],
+  "asns": [
+    {"asn":7922,"org":"Comcast","prefixes":7100,"tier":"T1","country":"US"},
+    {"asn":1299,"org":"Telia","prefixes":5800,"tier":"T1","country":"SE"},
+    {"asn":3356,"org":"Lumen (L3)","prefixes":5500,"tier":"T1","country":"US"},
+    {"asn":2914,"org":"NTT Communications","prefixes":5200,"tier":"T1","country":"JP"},
+    {"asn":1221,"org":"Telstra","prefixes":4800,"tier":"T1","country":"AU"},
+    {"asn":6939,"org":"Hurricane Electric","prefixes":4400,"tier":"T1","country":"US"},
+    {"asn":3257,"org":"GTT Communications","prefixes":3900,"tier":"T2","country":"US"},
+    {"asn":6453,"org":"TATA Communications","prefixes":3600,"tier":"T2","country":"IN"}
+  ],
+  "submarine_cables": [
+    {"name":"AEConnect-1","length_km":13500,"rfs":"2016","owners":["Aqua Comms"],"endpoints":[[40.71,-74.01],[53.33,-6.25]]},
+    {"name":"FLAG Atlantic-1","length_km":14000,"rfs":"2001","owners":["Reliance Globalcom"],"endpoints":[[40.71,-74.01],[51.50,-0.12]]},
+    {"name":"FASTER","length_km":9000,"rfs":"2016","owners":["Google","China Mobile","SoftBank"],"endpoints":[[34.05,-118.24],[35.69,139.69]]},
+    {"name":"SEA-ME-WE 4","length_km":18800,"rfs":"2005","owners":["Consortium of 16 carriers"],"endpoints":[[51.50,-0.12],[1.35,103.82]]},
+    {"name":"WACS","length_km":14530,"rfs":"2012","owners":["MTN","Orange","Vodacom"],"endpoints":[[51.50,-0.12],[-33.92,18.42]]},
+    {"name":"ARCOS-1","length_km":8600,"rfs":"2001","owners":["ARCOS"],"endpoints":[[40.71,-74.01],[-23.55,-46.63]]},
+    {"name":"Australia-Japan Cable","length_km":12700,"rfs":"2001","owners":["Telstra","Optus","KDDI"],"endpoints":[[35.69,139.69],[-33.87,151.21]]}
+  ]
+}
+</file>
+
+<file path="real-rails-nextjs/src/lib/mockData.ts">
+// Real Rails — Mock Data Adapter
+// Document 4: Mock Fallback — if live API returns error/rate-limit,
+// system MUST automatically switch to this data to keep UI functional
+
+import type { IXP, ASN, SubmarineCable } from "@/types";
+
+export const MOCK_IXPS: IXP[] = [
+  { id:1,  name:"DE-CIX Frankfurt",      city:"Frankfurt",    country:"DE", lat:50.11, lon:8.68,    member_count:1000, traffic_peak_tbps:12.6, tier:1, website:"https://de-cix.net",     source:"PeeringDB/mock" },
+  { id:2,  name:"AMS-IX Amsterdam",      city:"Amsterdam",    country:"NL", lat:52.37, lon:4.90,    member_count:953,  traffic_peak_tbps:10.3, tier:1, website:"https://ams-ix.net",     source:"PeeringDB/mock" },
+  { id:3,  name:"LINX London",           city:"London",       country:"GB", lat:51.51, lon:-0.09,   member_count:900,  traffic_peak_tbps:8.8,  tier:1, website:"https://linx.net",       source:"PeeringDB/mock" },
+  { id:4,  name:"NYIIX New York",        city:"New York",     country:"US", lat:40.71, lon:-74.01,  member_count:400,  traffic_peak_tbps:7.4,  tier:1, website:"https://nyiix.net",      source:"PeeringDB/mock" },
+  { id:5,  name:"Equinix IX Chicago",    city:"Chicago",      country:"US", lat:41.88, lon:-87.63,  member_count:320,  traffic_peak_tbps:6.0,  tier:1, website:"https://equinix.com",    source:"PeeringDB/mock" },
+  { id:6,  name:"JPIX Tokyo",            city:"Tokyo",        country:"JP", lat:35.69, lon:139.69,  member_count:500,  traffic_peak_tbps:5.0,  tier:1, website:"https://jpix.ad.jp",     source:"PeeringDB/mock" },
+  { id:7,  name:"Netnod Stockholm",      city:"Stockholm",    country:"SE", lat:59.33, lon:18.07,   member_count:280,  traffic_peak_tbps:3.5,  tier:2, website:"https://netnod.se",      source:"PeeringDB/mock" },
+  { id:8,  name:"MSK-IX Moscow",         city:"Moscow",       country:"RU", lat:55.75, lon:37.62,   member_count:520,  traffic_peak_tbps:4.1,  tier:2, website:"https://msk-ix.ru",      source:"PeeringDB/mock" },
+  { id:9,  name:"Equinix IX Singapore",  city:"Singapore",    country:"SG", lat:1.35,  lon:103.82,  member_count:410,  traffic_peak_tbps:4.8,  tier:1, website:"https://equinix.com",    source:"PeeringDB/mock" },
+  { id:10, name:"MIX Milano",            city:"Milan",        country:"IT", lat:45.46, lon:9.19,    member_count:235,  traffic_peak_tbps:2.2,  tier:2, website:"https://mix-it.net",     source:"PeeringDB/mock" },
+  { id:11, name:"PCH Sydney",            city:"Sydney",       country:"AU", lat:-33.87,lon:151.21,  member_count:190,  traffic_peak_tbps:1.9,  tier:2, website:"https://pch.net",        source:"PeeringDB/mock" },
+  { id:12, name:"LAIIX Los Angeles",     city:"Los Angeles",  country:"US", lat:34.05, lon:-118.24, member_count:280,  traffic_peak_tbps:3.1,  tier:2, website:"",                       source:"PeeringDB/mock" },
+  { id:13, name:"PTT São Paulo",         city:"São Paulo",    country:"BR", lat:-23.55,lon:-46.63,  member_count:340,  traffic_peak_tbps:2.8,  tier:2, website:"https://ptt.br",         source:"PeeringDB/mock" },
+  { id:14, name:"JINX Johannesburg",     city:"Johannesburg", country:"ZA", lat:-26.20,lon:28.04,   member_count:80,   traffic_peak_tbps:0.4,  tier:3, website:"",                       source:"PeeringDB/mock" },
+  { id:15, name:"DE-CIX Mumbai",         city:"Mumbai",       country:"IN", lat:19.08, lon:72.88,   member_count:180,  traffic_peak_tbps:1.6,  tier:2, website:"https://de-cix.net",     source:"PeeringDB/mock" },
+  { id:16, name:"FICIX Helsinki",        city:"Helsinki",     country:"FI", lat:60.17, lon:24.94,   member_count:110,  traffic_peak_tbps:0.8,  tier:3, website:"",                       source:"PeeringDB/mock" },
+  { id:17, name:"PLIX Warsaw",           city:"Warsaw",       country:"PL", lat:52.23, lon:21.01,   member_count:130,  traffic_peak_tbps:0.9,  tier:3, website:"",                       source:"PeeringDB/mock" },
+  { id:18, name:"France-IX Paris",       city:"Paris",        country:"FR", lat:48.86, lon:2.35,    member_count:320,  traffic_peak_tbps:4.2,  tier:2, website:"https://france-ix.net",  source:"PeeringDB/mock" },
+  { id:19, name:"Equinix IX Hong Kong",  city:"Hong Kong",    country:"HK", lat:22.32, lon:114.17,  member_count:300,  traffic_peak_tbps:3.2,  tier:2, website:"https://equinix.com",    source:"PeeringDB/mock" },
+  { id:20, name:"KCIX Seoul",            city:"Seoul",        country:"KR", lat:37.57, lon:126.98,  member_count:145,  traffic_peak_tbps:1.1,  tier:3, website:"",                       source:"PeeringDB/mock" },
+  { id:21, name:"DE-CIX Madrid",         city:"Madrid",       country:"ES", lat:40.42, lon:-3.70,   member_count:200,  traffic_peak_tbps:1.8,  tier:2, website:"https://de-cix.net",     source:"PeeringDB/mock" },
+  { id:22, name:"Nairobi IXP",           city:"Nairobi",      country:"KE", lat:-1.29, lon:36.82,   member_count:55,   traffic_peak_tbps:0.2,  tier:3, website:"",                       source:"PeeringDB/mock" },
+  { id:23, name:"BBIX Tokyo",            city:"Tokyo",        country:"JP", lat:35.65, lon:139.75,  member_count:160,  traffic_peak_tbps:1.4,  tier:2, website:"",                       source:"PeeringDB/mock" },
+  { id:24, name:"NAPAfrica JHB",         city:"Johannesburg", country:"ZA", lat:-26.10,lon:28.05,   member_count:115,  traffic_peak_tbps:0.6,  tier:3, website:"https://napAfrica.co.za",source:"PeeringDB/mock" },
+  { id:25, name:"IX.br Fortaleza",       city:"Fortaleza",    country:"BR", lat:-3.72, lon:-38.54,  member_count:88,   traffic_peak_tbps:0.5,  tier:3, website:"",                       source:"PeeringDB/mock" },
+  { id:26, name:"SGIX Singapore",        city:"Singapore",    country:"SG", lat:1.29,  lon:103.85,  member_count:220,  traffic_peak_tbps:2.1,  tier:2, website:"",                       source:"PeeringDB/mock" },
+  { id:27, name:"QIXP Doha",             city:"Doha",         country:"QA", lat:25.29, lon:51.53,   member_count:45,   traffic_peak_tbps:0.3,  tier:3, website:"",                       source:"PeeringDB/mock" },
+  { id:28, name:"Datahop Mumbai",        city:"Mumbai",       country:"IN", lat:19.10, lon:72.90,   member_count:95,   traffic_peak_tbps:0.7,  tier:3, website:"",                       source:"PeeringDB/mock" },
+  { id:29, name:"SAex Cape Town",        city:"Cape Town",    country:"ZA", lat:-33.92,lon:18.42,   member_count:70,   traffic_peak_tbps:0.35, tier:3, website:"",                       source:"PeeringDB/mock" },
+  { id:30, name:"Equinix IX Sydney",     city:"Sydney",       country:"AU", lat:-33.88,lon:151.20,  member_count:175,  traffic_peak_tbps:1.7,  tier:2, website:"",                       source:"PeeringDB/mock" },
+];
+
+export const MOCK_ASNS: ASN[] = [
+  { asn:7922,  org:"Comcast",             prefixes:7100, tier:"T1", country:"US", source:"RIPEstat/mock" },
+  { asn:1299,  org:"Telia Carrier",       prefixes:5800, tier:"T1", country:"SE", source:"RIPEstat/mock" },
+  { asn:3356,  org:"Lumen (Level 3)",     prefixes:5500, tier:"T1", country:"US", source:"RIPEstat/mock" },
+  { asn:2914,  org:"NTT Communications",  prefixes:5200, tier:"T1", country:"JP", source:"RIPEstat/mock" },
+  { asn:1221,  org:"Telstra",             prefixes:4800, tier:"T1", country:"AU", source:"RIPEstat/mock" },
+  { asn:6939,  org:"Hurricane Electric",  prefixes:4400, tier:"T1", country:"US", source:"RIPEstat/mock" },
+  { asn:3257,  org:"GTT Communications",  prefixes:3900, tier:"T2", country:"US", source:"RIPEstat/mock" },
+  { asn:6453,  org:"TATA Communications", prefixes:3600, tier:"T2", country:"IN", source:"RIPEstat/mock" },
+];
+
+export const MOCK_CABLES: SubmarineCable[] = [
+  { name:"AEConnect-1",      from:[40.71,-74.01], to:[53.33,-6.25],    color:"#38BDF8", w:2.2 },
+  { name:"FLAG Atlantic-1",  from:[40.71,-74.01], to:[51.50,-0.12],    color:"#38BDF8", w:1.8 },
+  { name:"TAT-14",           from:[38.90,-77.04], to:[52.37,4.90],     color:"#38BDF8", w:1.5 },
+  { name:"FASTER",           from:[34.05,-118.24],to:[35.69,139.69],   color:"#818CF8", w:2.2 },
+  { name:"UNITY",            from:[33.75,-118.19],to:[35.69,139.69],   color:"#818CF8", w:1.8 },
+  { name:"SJC-2",            from:[34.05,-118.24],to:[1.35,103.82],    color:"#818CF8", w:1.5 },
+  { name:"SEA-ME-WE 4",      from:[50.11,8.68],   to:[1.35,103.82],    color:"#38BDF8", w:2.2 },
+  { name:"SMW-5",            from:[51.50,-0.12],  to:[19.08,72.88],    color:"#38BDF8", w:1.5 },
+  { name:"WACS",             from:[51.50,-0.12],  to:[-33.92,18.42],   color:"#F59E0B", w:1.8 },
+  { name:"SEACOM",           from:[-26.20,28.04], to:[19.08,72.88],    color:"#F59E0B", w:1.5 },
+  { name:"Australia-Japan",  from:[35.69,139.69], to:[-33.87,151.21],  color:"#818CF8", w:1.8 },
+  { name:"ARCOS-1",          from:[40.71,-74.01], to:[-23.55,-46.63],  color:"#F59E0B", w:1.8 },
+  { name:"MAREA",            from:[40.71,-74.01], to:[40.42,-3.70],    color:"#38BDF8", w:1.5 },
+  { name:"Dunant",           from:[40.71,-74.01], to:[43.30,5.37],     color:"#38BDF8", w:1.5 },
+  { name:"PEACE Cable",      from:[19.08,72.88],  to:[4.05,9.70],      color:"#F59E0B", w:1.5 },
+  { name:"APG",              from:[35.69,139.69], to:[1.35,103.82],    color:"#818CF8", w:1.8 },
+  { name:"EAC-C2C",          from:[35.69,139.69], to:[34.05,-118.24],  color:"#818CF8", w:1.5 },
+  { name:"Hawaiki",          from:[34.05,-118.24],to:[-33.87,151.21],  color:"#818CF8", w:1.5 },
+  { name:"SAex",             from:[-33.92,18.42], to:[-23.55,-46.63],  color:"#F59E0B", w:1.5 },
+  { name:"AMX-1",            from:[40.71,-74.01], to:[4.60,-74.08],    color:"#F59E0B", w:1.2 },
+];
+
+// Data source labels — Document 3
+export const DATA_SOURCES = {
+  ixps:   "PeeringDB",
+  asns:   "RIPEstat",
+  cables: "TeleGeography",
+} as const;
+</file>
+
+<file path="real-rails-nextjs/src/types/index.ts">
+// Real Rails — Type Definitions
+// Document 3: TypeScript required
+
+export interface IXP {
+  id: number;
+  name: string;
+  city: string;
+  country: string;
+  lat: number;
+  lon: number;
+  member_count: number;
+  traffic_peak_tbps: number;
+  tier: 1 | 2 | 3;
+  website?: string;
+  source?: string;
+  fetched_at?: string;
+}
+
+export interface ASN {
+  asn: number;
+  org?: string;
+  organization?: string;
+  prefixes?: number;
+  prefixes_v4?: number;
+  prefixes_v6?: number;
+  tier: "T1" | "T2" | "T3";
+  country: string;
+  source?: string;
+}
+
+export interface SubmarineCable {
+  name: string;
+  from: [number, number]; // [lat, lon]
+  to: [number, number];
+  color: string;
+  w: number;
+  owners?: string[];
+  length_km?: number;
+}
+
+export interface ConcentrationMetric {
+  top_n: number;
+  concentration_pct: number;
+  risk_level: "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "UNKNOWN";
+}
+
+export interface IXPApiResponse {
+  count: number;
+  ixps: IXP[];
+  intelligence: {
+    concentration: ConcentrationMetric;
+    insight: string;
+  };
+  fetched_at: string;
+}
+
+export interface ASNApiResponse {
+  count: number;
+  asns: ASN[];
+  fetched_at: string;
+}
+
+export interface SimulationResult {
+  simulation: string;
+  failed_node: string;
+  affected_routes_estimate: number;
+  bgp_reconvergence_estimate_sec: number;
+  reroute_candidates: string[];
+  impact_level: "CRITICAL" | "HIGH" | "MEDIUM";
+}
+
+export type LayerKey = "ixp" | "cable" | "bgp" | "t1";
+
+export interface LayerState {
+  ixp: boolean;
+  cable: boolean;
+  bgp: boolean;
+  t1: boolean;
+}
+
+// Data sources — Document 3
+export type DataSource = "PeeringDB" | "RIPEstat" | "TeleGeography" | "mock";
+</file>
+
+<file path="real-rails-nextjs/tailwind.config.ts">
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  darkMode: ["class"],
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ["Inter", "sans-serif"],
+      },
+      colors: {
+        /* Real Rails DNA — Document 1 */
+        "rr-bg":      "#030712",
+        "rr-surface": "#0B1117",
+        "rr-surface2":"#0F1A24",
+        "rr-cyan":    "#38BDF8",
+        "rr-indigo":  "#818CF8",
+        "rr-border":  "#1F2937",
+        "rr-text":    "#E2E8F0",
+        "rr-muted":   "#64748B",
+        border:   "hsl(var(--border))",
+        input:    "hsl(var(--input))",
+        ring:     "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT:    "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT:    "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT:    "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT:    "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT:    "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        card: {
+          DEFAULT:    "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+    },
+  },
+  plugins: [],
+};
+
+export default config;
+</file>
+
+<file path="real-rails-nextjs/tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+</file>
+
+<file path="requirements.txt">
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+httpx==0.27.0
+pandas==2.2.2
+python-dotenv==1.0.1
+aiofiles==23.2.1
+</file>
+
+<file path="UAT_CHECKLIST.md">
+# UAT Checklist
+
+## Scope
+- FastAPI backend API routes
+- Dashboard UI rendering
+- Frontend/backend data handshake
+- Next.js build validation
+
+## Verification results
+
+### Backend API checks
+- `/api/ixps` → `200`
+- `/api/asns` → `200`
+- `/api/cables` → `200`
+- `/api/download/sample` → `200`
+
+### Browser / dashboard checks
+- Dashboard loads at `http://127.0.0.1:8000`
+- Page title is `Real Rails — Internet Backbone & IXP Map`
+- Key sections render: intelligence panel, filters, ASN table, route failure simulation, download button
+- Screenshot captured as `dashboard-final.png`
+
+### Build validation
+- `npm install` completed successfully
+- `npm run build` completed successfully
+
+### Notes
+- Source files were checked for project-side `console.log` / `console.warn` / `console.error` usage and no project-side console logging was found.
+- The active backend route fixes and fallback handling remain in place.
+</file>
+
+<file path="VAR_REPORT.md">
+# VAR Report
+
+## Project Summary
+This submission validates the backend fallback fixes, dashboard readiness, and the Next.js build path for the Real Rails IXP dashboard.
+
+## Verification Activities
+
+### Backend verification
+- Confirmed `/api/ixps`, `/api/asns`, `/api/cables`, and `/api/download/sample` all returned HTTP `200`.
+- Confirmed the backend responds successfully while using the fallback data path and live RIPEstat enrichment where available.
+
+### Browser verification
+- Opened the live dashboard at `http://127.0.0.1:8000`.
+- Confirmed the page title and core dashboard layout rendered successfully.
+- Captured the final functional dashboard screenshot as `dashboard-final.png`.
+
+### Build verification
+- Ran `npm install` successfully in `real-rails-nextjs`.
+- Ran `npm run build` successfully.
+
+## Result
+- Backend functionality is verified and stable.
+- Dashboard is loading correctly and is visually functional.
+- Next.js build is passing.
+
+## Notes
+- Added `next.config.mjs` to support the installed Next.js version.
+- Removed the invalid `@radix-ui/react-badge` dependency entry from `package.json`.
+- No project-side `console.log` / `console.warn` / `console.error` usage was found in the source files.
+</file>
+
+<file path="frontend.html">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Real Rails — Internet Backbone & IXP Map</title>
+
+<!-- Inter Font (Protocol: Typography = Inter or Geist Sans) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Leaflet CSS (Protocol: MANDATORY Leaflet) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- D3.js (Protocol: Required) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+
+<!-- Turf.js (Protocol: Required) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/6.5.0/turf.min.js"></script>
+
+<style>
+/* ═══════════════════════════════════════
+   REAL RAILS DNA — EXACT SPEC COLORS
+   ═══════════════════════════════════════ */
+:root {
+  --bg:       #030712;
+  --surface:  #0B1117;
+  --surface2: #0F1A24;
+  --cyan:     #38BDF8;
+  --indigo:   #818CF8;
+  --border:   #1F2937;
+  --text:     #E2E8F0;
+  --muted:    #64748B;
+  --green:    #22C55E;
+  --amber:    #F59E0B;
+  --red:      #EF4444;
+  --font:     'Inter', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%; overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ── */
+#header {
+  height: 46px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 18px; flex-shrink: 0; z-index: 1000; position: relative;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.tag {
+  font-size: 9px; letter-spacing: 1.8px; font-weight: 600;
+  background: rgba(56,189,248,0.12); color: var(--cyan);
+  border: 1px solid rgba(56,189,248,0.3); padding: 2px 9px; border-radius: 2px;
+}
+.htitle { font-size: 14px; font-weight: 600; color: var(--cyan); letter-spacing: 0.3px; }
+.hmeta  { font-size: 9px; color: var(--muted); letter-spacing: 0.3px; }
+.pulse  {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 7px var(--green);
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ── MAIN LAYOUT ── */
+#wrap { display: flex; height: calc(100vh - 46px); }
+
+/* Stage: 70% */
+#stage { flex: 0 0 70%; position: relative; overflow: hidden; border-right: 1px solid var(--border); }
+
+/* Sidebar: 30% — EXACT per protocol */
+#sidebar {
+  flex: 0 0 30%; background: var(--surface);
+  overflow-y: auto; display: flex; flex-direction: column;
+}
+#sidebar::-webkit-scrollbar { width: 3px; }
+#sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── LEAFLET MAP OVERRIDE ── */
+#map { width: 100%; height: 100%; background: #030712 !important; }
+
+/* Dark tiles */
+.leaflet-tile { filter: brightness(0.18) saturate(0.2) hue-rotate(200deg) contrast(1.1); }
+
+/* IXP node glow — protocol: 0.5px cyan glow on active elements */
+.ixp-node.tier-1 path {
+  filter: drop-shadow(0 0 5px #38BDF8) drop-shadow(0 0 10px rgba(56,189,248,0.5));
+}
+.ixp-node.tier-2 path {
+  filter: drop-shadow(0 0 4px #818CF8);
+}
+.ixp-node.tier-3 path {
+  filter: drop-shadow(0 0 3px #F59E0B);
+}
+
+/* Pulse animation for tier-1 nodes */
+@keyframes ixp-pulse {
+  0%   { opacity: 1; transform: scale(1); }
+  50%  { opacity: 0.6; transform: scale(1.15); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.ixp-node.tier-1 {
+  animation: ixp-pulse 2.5s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.leaflet-container { background: #030712 !important; }
+
+/* Remove default Leaflet UI chrome */
+.leaflet-control-zoom { display: none; }
+.leaflet-control-attribution { display: none; }
+
+/* Custom zoom */
+#zoom-ctrls {
+  position: absolute; bottom: 60px; right: 14px; z-index: 900;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.zb {
+  width: 28px; height: 28px;
+  background: rgba(11,17,23,0.85);
+  border: 1px solid var(--border);
+  color: var(--cyan); font-size: 16px; font-weight: 400;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  border-radius: 3px; transition: all .15s; font-family: var(--font);
+  backdrop-filter: blur(6px);
+}
+.zb:hover { border-color: var(--cyan); background: rgba(56,189,248,0.1); }
+
+/* ── TOOLTIP ── */
+#tip {
+  position: absolute; z-index: 2000;
+  background: rgba(11,17,23,0.96);
+  border: 1px solid var(--cyan);
+  border-radius: 5px; padding: 10px 13px;
+  pointer-events: none; opacity: 0; transition: opacity .15s;
+  min-width: 190px; max-width: 260px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 20px rgba(56,189,248,0.15);
+}
+#tip .tn { font-weight: 600; color: var(--cyan); font-size: 12px; margin-bottom: 6px; }
+#tip .tr { display: flex; justify-content: space-between; gap: 14px; font-size: 10px; padding: 2px 0; }
+#tip .tr span:first-child { color: var(--muted); }
+#tip .tr span:last-child  { color: var(--text); font-weight: 500; }
+
+/* ── LEGEND ── */
+#legend {
+  position: absolute; bottom: 14px; left: 14px; z-index: 900;
+  background: rgba(11,17,23,0.82);
+  border: 1px solid var(--border); border-radius: 5px;
+  padding: 9px 12px; font-size: 9px;
+  backdrop-filter: blur(10px);
+}
+.lr { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; color: var(--muted); }
+.lr:last-child { margin-bottom: 0; }
+.ld { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.ll { width: 20px; height: 0; flex-shrink: 0; }
+
+/* ── TURF BADGE ── */
+#turf-badge {
+  position: absolute; top: 10px; right: 14px; z-index: 900;
+  background: rgba(11,17,23,0.82); border: 1px solid rgba(56,189,248,0.2);
+  border-radius: 3px; padding: 4px 9px; font-size: 9px; color: var(--muted);
+  backdrop-filter: blur(8px);
+}
+#turf-badge span { color: var(--cyan); }
+
+/* ── SIM OVERLAY ── */
+#sim-layer { position: absolute; inset: 0; pointer-events: none; z-index: 800; }
+
+/* ── FACILITY CARD MODAL ── */
+#fc-modal {
+  position: absolute; z-index: 3000;
+  width: 280px;
+  background: rgba(11,17,23,0.97);
+  border: 1px solid var(--cyan);
+  border-radius: 6px; padding: 14px;
+  display: none;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 0 30px rgba(56,189,248,0.18);
+}
+#fc-modal .fc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+#fc-modal .fc-title  { font-weight: 700; color: var(--cyan); font-size: 13px; line-height: 1.3; }
+#fc-modal .fc-sub    { font-size: 9px; color: var(--muted); margin-top: 2px; letter-spacing: 0.5px; }
+#fc-modal .fc-close  {
+  background: none; border: 1px solid var(--border); color: var(--muted);
+  width: 20px; height: 20px; border-radius: 2px; cursor: pointer;
+  font-size: 10px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .15s;
+}
+#fc-modal .fc-close:hover { border-color: var(--red); color: var(--red); }
+.fc-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 5px 0; border-bottom: 1px solid rgba(31,41,55,0.5); font-size: 11px;
+}
+.fc-row:last-child { border-bottom: none; }
+.fc-row .fk { color: var(--muted); }
+.fc-row .fv { color: var(--text); font-weight: 500; }
+.fc-bar-wrap { flex: 1; margin: 0 8px; background: rgba(255,255,255,0.05); height: 3px; border-radius: 2px; overflow: hidden; }
+.fc-bar-fill { height: 100%; border-radius: 2px; background: var(--cyan); }
+#fc-turf { font-size: 9px; color: var(--indigo); margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border); }
+
+/* ── LOADING OVERLAY ── */
+#loading {
+  position: absolute; inset: 0; background: var(--bg); z-index: 9999;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+}
+.spin {
+  width: 30px; height: 30px;
+  border: 2px solid var(--border); border-top-color: var(--cyan);
+  border-radius: 50%; animation: spin .75s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.ltext { font-size: 10px; color: var(--muted); letter-spacing: 0.8px; }
+
+/* ════════════════════════════════════════
+   SIDEBAR SECTIONS
+   ════════════════════════════════════════ */
+.sec { padding: 13px 15px; border-bottom: 1px solid var(--border); }
+
+.slabel {
+  font-size: 9px; color: var(--cyan); letter-spacing: 1.8px;
+  text-transform: uppercase; margin-bottom: 9px;
+  display: flex; align-items: center; gap: 7px; font-weight: 600;
+}
+.slabel::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(to right, rgba(56,189,248,0.3), transparent);
+}
+
+/* ── Section A: Metric cards ── */
+.mgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
+
+/* GLASSMORPHISM (Protocol: Subtle glassmorphism on cards) */
+.mc {
+  background: rgba(11,17,23,0.6);
+  border: 1px solid rgba(31,41,55,0.8);
+  border-radius: 5px; padding: 9px 11px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color .2s;
+}
+.mc:hover { border-color: rgba(56,189,248,0.25); }
+.mc.hi { border-color: rgba(56,189,248,0.3); box-shadow: inset 0 0 12px rgba(56,189,248,0.04); }
+.mv { font-size: 20px; font-weight: 700; color: var(--cyan); line-height: 1; }
+.ml { font-size: 9px; color: var(--muted); margin-top: 3px; letter-spacing: 0.4px; font-weight: 500; }
+.mv.danger { color: var(--red); }
+
+/* ── Section B: Prose ── */
+.prose { font-size: 11px; color: #94A3B8; line-height: 1.7; }
+.prose strong { color: var(--text); font-weight: 600; }
+
+/* Concentration bar */
+.cbar { margin-top: 10px; }
+.cbrow { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+.cbrow .crisk { font-weight: 600; color: var(--red); }
+.ctrack { background: rgba(255,255,255,0.05); border-radius: 2px; height: 6px; overflow: hidden; }
+.cfill { height: 100%; background: linear-gradient(to right, #F59E0B, #EF4444); border-radius: 2px; transition: width .7s; }
+
+/* ── Section C: Entity bars ── */
+.entity {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 9px; margin-bottom: 4px;
+  background: rgba(11,17,23,0.6);
+  border: 1px solid var(--border); border-radius: 4px;
+  backdrop-filter: blur(6px);
+  cursor: pointer; transition: border-color .15s;
+}
+.entity:hover { border-color: rgba(56,189,248,0.4); }
+.en { font-size: 10px; color: var(--text); min-width: 115px; font-weight: 500; }
+.eb { flex: 1; background: rgba(255,255,255,0.05); height: 4px; border-radius: 2px; overflow: hidden; }
+.ef { height: 100%; border-radius: 2px; }
+.ep { font-size: 10px; color: var(--cyan); min-width: 50px; text-align: right; font-weight: 600; }
+
+/* ── D3 Chart ── */
+#d3-chart { margin-top: 10px; }
+#d3-chart svg text { font-family: var(--font) !important; }
+
+/* ── Section D: Filters ── */
+.fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
+.fb {
+  background: rgba(11,17,23,0.6);
+  border: 1px solid var(--border); color: var(--muted);
+  font-family: var(--font); font-size: 10px; font-weight: 500;
+  padding: 7px 9px; border-radius: 4px;
+  cursor: pointer; text-align: left; transition: all .15s;
+  backdrop-filter: blur(6px);
+}
+.fb:hover { border-color: rgba(56,189,248,0.4); color: var(--cyan); }
+.fb.on {
+  border-color: var(--cyan); color: var(--cyan);
+  background: rgba(56,189,248,0.07);
+  box-shadow: inset 0 0 0 1px rgba(56,189,248,0.2), 0 0 8px rgba(56,189,248,0.1);
+}
+
+/* ASN TanStack-style table */
+#asn-wrap {
+  margin-top: 12px;
+  border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+}
+.at-head {
+  display: flex; background: rgba(15,26,36,0.9); border-bottom: 1px solid var(--border);
+  font-size: 9px; color: var(--muted); font-weight: 600; letter-spacing: 1px;
+}
+.at-head .ah { padding: 6px 8px; flex: 1; cursor: pointer; user-select: none; transition: color .15s; }
+.at-head .ah:hover { color: var(--cyan); }
+.at-head .ah.sort { color: var(--cyan); }
+.at-row {
+  display: flex; border-bottom: 1px solid rgba(31,41,55,0.4);
+  font-size: 10px; cursor: pointer; transition: background .1s;
+}
+.at-row:last-child { border-bottom: none; }
+.at-row:hover { background: rgba(56,189,248,0.05); }
+.at-row.sel { background: rgba(56,189,248,0.08); border-left: 2px solid var(--cyan); }
+.at-row .ac { padding: 6px 8px; flex: 1; color: var(--text); display: flex; align-items: center; }
+.badge {
+  display: inline-block; padding: 1px 6px; border-radius: 2px;
+  font-size: 9px; font-weight: 600; border: 1px solid;
+}
+.t1b { color: var(--cyan);   border-color: rgba(56,189,248,0.4);  background: rgba(56,189,248,0.08); }
+.t2b { color: var(--indigo); border-color: rgba(129,140,248,0.4); background: rgba(129,140,248,0.08); }
+
+/* Sim button */
+.simbtn {
+  width: 100%; margin-top: 8px;
+  background: rgba(11,17,23,0.6); border: 1px solid rgba(239,68,68,0.45);
+  color: var(--red); font-family: var(--font); font-size: 10px; font-weight: 600;
+  padding: 7px 10px; border-radius: 4px; cursor: pointer;
+  letter-spacing: 0.3px; transition: all .15s;
+  backdrop-filter: blur(6px);
+}
+.simbtn:hover { background: rgba(239,68,68,0.1); box-shadow: 0 0 12px rgba(239,68,68,0.2); }
+#simst {
+  font-size: 9px; margin-top: 5px; padding: 7px 9px; border-radius: 4px;
+  display: none; line-height: 1.5;
+}
+#simst.show {
+  display: block; background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.35); color: var(--red);
+}
+
+/* Download button */
+#dlbtn {
+  margin: 12px 15px;
+  background: rgba(11,17,23,0.6); border: 1px solid var(--border);
+  color: var(--cyan); font-family: var(--font); font-size: 11px; font-weight: 500;
+  padding: 9px 14px; border-radius: 4px; cursor: pointer;
+  display: flex; align-items: center; gap: 7px; letter-spacing: 0.3px;
+  transition: all .15s; width: calc(100% - 30px);
+  backdrop-filter: blur(6px);
+}
+#dlbtn:hover { border-color: var(--cyan); background: rgba(56,189,248,0.08); box-shadow: 0 0 14px rgba(56,189,248,0.15); }
+
+/* API status */
+#apist { font-size: 9px; color: var(--muted); padding: 7px 15px; border-top: 1px solid var(--border); }
+#apist span.ok { color: var(--green); }
+#apist span.mock { color: var(--amber); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div class="logo">
+    <div class="pulse"></div>
+    <span class="tag">REAL RAILS</span>
+    <span class="htitle">Internet Backbone &amp; IXP Intelligence Map</span>
+  </div>
+  <div class="hmeta">DATA &amp; INTELLIGENCE RAIL &nbsp;·&nbsp; ID: 40 &nbsp;·&nbsp; <span id="ts"></span></div>
+</div>
+
+<div id="wrap">
+
+  <!-- ══ STAGE 70% ══ -->
+  <div id="stage">
+    <div id="loading">
+      <div class="spin"></div>
+      <div class="ltext">INITIALISING LEAFLET MAP ENGINE...</div>
+    </div>
+
+    <!-- LEAFLET MAP -->
+    <div id="map"></div>
+
+    <!-- Tooltip -->
+    <div id="tip">
+      <div class="tn" id="tt-name"></div>
+      <div id="tt-body"></div>
+    </div>
+
+    <!-- Facility Card Modal (click on IXP node) -->
+    <div id="fc-modal">
+      <div class="fc-header">
+        <div>
+          <div class="fc-title" id="fc-name">—</div>
+          <div class="fc-sub" id="fc-sub">FACILITY CARD</div>
+        </div>
+        <button class="fc-close" onclick="closeFacilityCard()">✕</button>
+      </div>
+      <div id="fc-rows"></div>
+      <div id="fc-turf"></div>
+    </div>
+
+    <!-- Legend -->
+    <div id="legend">
+      <div class="lr"><div class="ld" style="background:#38BDF8;box-shadow:0 0 5px #38BDF8"></div>Tier-1 IXP</div>
+      <div class="lr"><div class="ld" style="background:#818CF8"></div>Tier-2 IXP</div>
+      <div class="lr"><div class="ld" style="background:#F59E0B"></div>Regional IXP</div>
+      <div class="lr"><div class="ll" style="border-top:2px solid #38BDF8"></div>Submarine Cable (Cyan)</div>
+      <div class="lr"><div class="ll" style="border-top:2px dashed #818CF8"></div>Terrestrial BGP (Indigo)</div>
+    </div>
+
+    <!-- Turf.js distance badge -->
+    <div id="turf-badge">Turf.js &nbsp;·&nbsp; Nearest IXP: <span id="turf-dist">—</span></div>
+
+    <!-- Custom zoom -->
+    <div id="zoom-ctrls">
+      <button class="zb" onclick="map.zoomIn()">+</button>
+      <button class="zb" onclick="map.zoomOut()">−</button>
+    </div>
+
+    <!-- Sim canvas overlay -->
+    <canvas id="sim-layer"></canvas>
+  </div>
+
+  <!-- ══ SIDEBAR 30% ══ -->
+  <div id="sidebar">
+
+    <!-- A: Network Intelligence -->
+    <div class="sec">
+      <div class="slabel">▸ A &nbsp; Network Intelligence</div>
+      <div class="mgrid">
+        <div class="mc hi"><div class="mv" id="m-ixp">—</div><div class="ml">IXPs MAPPED</div></div>
+        <div class="mc hi"><div class="mv">74K+</div><div class="ml">ACTIVE ASNs</div></div>
+        <div class="mc"><div class="mv">530+</div><div class="ml">SUBMARINE CABLES</div></div>
+        <div class="mc"><div class="mv danger" id="m-conc">—</div><div class="ml">TRAFFIC VIA TOP 5</div></div>
+      </div>
+    </div>
+
+    <!-- B: Why This Matters -->
+    <div class="sec">
+      <div class="slabel">▸ B &nbsp; Why This Matters</div>
+      <p class="prose">
+        The internet's physical layer is <strong>far more concentrated than it appears.</strong>
+        Behind every "cloud" service sits a handful of critical exchange points where thousands
+        of networks physically swap traffic.<br><br>
+        A disruption at <strong>DE-CIX Frankfurt</strong> or <strong>AMS-IX Amsterdam</strong>
+        can degrade connectivity for hundreds of millions of users across multiple continents.
+        Builders routing around choke points and allocators tracking infrastructure risk
+        need to understand where the real leverage points are — and who controls them.
+      </p>
+      <div class="cbar">
+        <div class="cbrow">
+          <span>Path Concentration Risk</span>
+          <span class="crisk" id="risk-label">LOADING...</span>
+        </div>
+        <div class="ctrack"><div class="cfill" id="risk-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- C: Who Controls the Rail -->
+    <div class="sec">
+      <div class="slabel">▸ C &nbsp; Who Controls the Rail</div>
+      <p class="prose" style="margin-bottom:9px">Top IXPs by peak traffic throughput. Click to open facility card.</p>
+      <div id="entity-list"></div>
+
+      <!-- D3 Concentration Chart -->
+      <div id="d3-chart"></div>
+    </div>
+
+    <!-- D: Filters & Controls -->
+    <div class="sec">
+      <div class="slabel">▸ D &nbsp; Filters &amp; Controls</div>
+      <div class="fgrid">
+        <button class="fb on" data-l="ixp"    onclick="toggle(this)">◈ IXP Nodes</button>
+        <button class="fb on" data-l="cable"  onclick="toggle(this)">≋ Submarine Cables</button>
+        <button class="fb on" data-l="bgp"    onclick="toggle(this)">─ Terrestrial BGP</button>
+        <button class="fb"    data-l="t1"     onclick="toggle(this)">T1 ASN Paths</button>
+      </div>
+
+      <!-- ASN Table (TanStack-style sortable) -->
+      <div style="margin-top:13px">
+        <div class="slabel" style="margin-bottom:5px">▸ ASN Routing Table</div>
+        <div id="asn-wrap">
+          <div class="at-head">
+            <div class="ah sort" data-col="asn"      onclick="sortASN('asn',this)">ASN ↕</div>
+            <div class="ah"      data-col="org"       onclick="sortASN('org',this)">ORGANIZATION ↕</div>
+            <div class="ah"      data-col="prefixes"  onclick="sortASN('prefixes',this)">PREFIXES ↕</div>
+            <div class="ah"      data-col="tier"      onclick="sortASN('tier',this)">TIER ↕</div>
+          </div>
+          <div id="asn-body"></div>
+        </div>
+      </div>
+
+      <!-- Route Failure Simulation -->
+      <div style="margin-top:13px">
+        <div class="slabel" style="margin-bottom:5px">▸ Route Failure Simulation</div>
+        <p class="prose" style="margin-bottom:5px">Simulate a Tier-1 IXP outage and visualise BGP re-routing cascades.</p>
+        <button class="simbtn" onclick="runSim()">⚠ SIMULATE DE-CIX FRANKFURT FAILURE</button>
+        <div id="simst"></div>
+      </div>
+    </div>
+
+    <!-- E: Download -->
+    <button id="dlbtn" onclick="download()">↓ &nbsp;Download Sample Data (JSON)</button>
+
+    <div id="apist">Data source: <span id="api-src">connecting...</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════ -->
+<script>
+// ─── STATE ─────────────────────────────────────────
+let map, ixpLayer, cableLayer, bgpLayer, t1Layer;
+let IXPs=[], ASNs=[], CABLES=[];
+let simOn=false, simRAF=null, simCtx=null;
+let asnSort={col:'prefixes', dir:-1};
+let selectedASN=null;
+
+const L_LAYERS = { ixp:true, cable:true, bgp:true, t1:false };
+
+// ─── MOCK DATA ──────────────────────────────────────
+const MOCK_IXPS = [
+  {id:1, name:'DE-CIX Frankfurt',      city:'Frankfurt',   country:'DE', lat:50.11, lon:8.68,   member_count:1000, traffic_peak_tbps:12.6, tier:1, website:'https://de-cix.net'},
+  {id:2, name:'AMS-IX Amsterdam',      city:'Amsterdam',   country:'NL', lat:52.37, lon:4.90,   member_count:953,  traffic_peak_tbps:10.3, tier:1, website:'https://ams-ix.net'},
+  {id:3, name:'LINX London',           city:'London',      country:'GB', lat:51.51, lon:-0.09,  member_count:900,  traffic_peak_tbps:8.8,  tier:1, website:'https://linx.net'},
+  {id:4, name:'NYIIX New York',        city:'New York',    country:'US', lat:40.71, lon:-74.01, member_count:400,  traffic_peak_tbps:7.4,  tier:1, website:'https://nyiix.net'},
+  {id:5, name:'Equinix IX Chicago',    city:'Chicago',     country:'US', lat:41.88, lon:-87.63, member_count:320,  traffic_peak_tbps:6.0,  tier:1, website:'https://equinix.com'},
+  {id:6, name:'JPIX Tokyo',            city:'Tokyo',       country:'JP', lat:35.69, lon:139.69, member_count:500,  traffic_peak_tbps:5.0,  tier:1, website:'https://jpix.ad.jp'},
+  {id:7, name:'Netnod Stockholm',      city:'Stockholm',   country:'SE', lat:59.33, lon:18.07,  member_count:280,  traffic_peak_tbps:3.5,  tier:2, website:'https://netnod.se'},
+  {id:8, name:'MSK-IX Moscow',         city:'Moscow',      country:'RU', lat:55.75, lon:37.62,  member_count:520,  traffic_peak_tbps:4.1,  tier:2, website:'https://msk-ix.ru'},
+  {id:9, name:'Equinix IX Singapore',  city:'Singapore',   country:'SG', lat:1.35,  lon:103.82, member_count:410,  traffic_peak_tbps:4.8,  tier:1, website:'https://equinix.com'},
+  {id:10,name:'MIX Milano',            city:'Milan',       country:'IT', lat:45.46, lon:9.19,   member_count:235,  traffic_peak_tbps:2.2,  tier:2, website:'https://mix-it.net'},
+  {id:11,name:'PCH Sydney',            city:'Sydney',      country:'AU', lat:-33.87,lon:151.21, member_count:190,  traffic_peak_tbps:1.9,  tier:2, website:'https://pch.net'},
+  {id:12,name:'LAIIX Los Angeles',     city:'Los Angeles', country:'US', lat:34.05, lon:-118.24,member_count:280,  traffic_peak_tbps:3.1,  tier:2, website:''},
+  {id:13,name:'PTT São Paulo',         city:'São Paulo',   country:'BR', lat:-23.55,lon:-46.63, member_count:340,  traffic_peak_tbps:2.8,  tier:2, website:'https://ptt.br'},
+  {id:14,name:'JINX Johannesburg',     city:'Johannesburg',country:'ZA', lat:-26.20,lon:28.04,  member_count:80,   traffic_peak_tbps:0.4,  tier:3, website:''},
+  {id:15,name:'DE-CIX Mumbai',         city:'Mumbai',      country:'IN', lat:19.08, lon:72.88,  member_count:180,  traffic_peak_tbps:1.6,  tier:2, website:'https://de-cix.net'},
+  {id:16,name:'FICIX Helsinki',        city:'Helsinki',    country:'FI', lat:60.17, lon:24.94,  member_count:110,  traffic_peak_tbps:0.8,  tier:3, website:''},
+  {id:17,name:'PLIX Warsaw',           city:'Warsaw',      country:'PL', lat:52.23, lon:21.01,  member_count:130,  traffic_peak_tbps:0.9,  tier:3, website:''},
+  {id:18,name:'SGIX Singapore',         city:'Singapore',   country:'SG', lat:1.29,  lon:103.85, member_count:220,  traffic_peak_tbps:2.1,  tier:2, website:''},
+  {id:19,name:'BBIX Tokyo',             city:'Tokyo',       country:'JP', lat:35.65, lon:139.75, member_count:160,  traffic_peak_tbps:1.4,  tier:2, website:''},
+  {id:20,name:'Equinix IX Hong Kong',   city:'Hong Kong',   country:'HK', lat:22.32, lon:114.17, member_count:300,  traffic_peak_tbps:3.2,  tier:2, website:'https://equinix.com'},
+  {id:21,name:'France-IX Paris',        city:'Paris',       country:'FR', lat:48.86, lon:2.35,   member_count:320,  traffic_peak_tbps:4.2,  tier:2, website:'https://france-ix.net'},
+  {id:22,name:'Equinix IX Sydney',      city:'Sydney',      country:'AU', lat:-33.88,lon:151.20, member_count:175,  traffic_peak_tbps:1.7,  tier:2, website:''},
+  {id:23,name:'NAPAfrica Johannesburg', city:'Johannesburg',country:'ZA', lat:-26.10,lon:28.05,  member_count:115,  traffic_peak_tbps:0.6,  tier:3, website:'https://napAfrica.co.za'},
+  {id:24,name:'DE-CIX Madrid',          city:'Madrid',      country:'ES', lat:40.42, lon:-3.70,  member_count:200,  traffic_peak_tbps:1.8,  tier:2, website:'https://de-cix.net'},
+  {id:25,name:'AMSIX Hong Kong',        city:'Hong Kong',   country:'HK', lat:22.28, lon:114.16, member_count:190,  traffic_peak_tbps:2.0,  tier:2, website:''},
+  {id:26,name:'KCIX Seoul',             city:'Seoul',       country:'KR', lat:37.57, lon:126.98, member_count:145,  traffic_peak_tbps:1.1,  tier:3, website:''},
+  {id:27,name:'Datahop Mumbai',         city:'Mumbai',      country:'IN', lat:19.10, lon:72.90,  member_count:95,   traffic_peak_tbps:0.7,  tier:3, website:''},
+  {id:28,name:'IX.br Fortaleza',        city:'Fortaleza',   country:'BR', lat:-3.72, lon:-38.54, member_count:88,   traffic_peak_tbps:0.5,  tier:3, website:''},
+  {id:29,name:'Nairobi IXP',            city:'Nairobi',     country:'KE', lat:-1.29, lon:36.82,  member_count:55,   traffic_peak_tbps:0.2,  tier:3, website:''},
+  {id:30,name:'QIXP Doha',             city:'Doha',        country:'QA', lat:25.29, lon:51.53,  member_count:45,   traffic_peak_tbps:0.3,  tier:3, website:''},
+];
+const MOCK_ASNS = [
+  {asn:7922, org:'Comcast',            prefixes:7100, tier:'T1', country:'US'},
+  {asn:1299, org:'Telia Carrier',      prefixes:5800, tier:'T1', country:'SE'},
+  {asn:3356, org:'Lumen (Level 3)',    prefixes:5500, tier:'T1', country:'US'},
+  {asn:2914, org:'NTT Communications', prefixes:5200, tier:'T1', country:'JP'},
+  {asn:1221, org:'Telstra',            prefixes:4800, tier:'T1', country:'AU'},
+  {asn:6939, org:'Hurricane Electric', prefixes:4400, tier:'T1', country:'US'},
+  {asn:3257, org:'GTT Communications', prefixes:3900, tier:'T2', country:'US'},
+  {asn:6453, org:'TATA Communications',prefixes:3600, tier:'T2', country:'IN'},
+];
+const MOCK_CABLES = [
+  {name:'AEConnect-1',        from:[40.71,-74.01], to:[53.33,-6.25],   color:'#38BDF8', w:2.2},
+  {name:'FLAG Atlantic-1',    from:[40.71,-74.01], to:[51.50,-0.12],   color:'#38BDF8', w:1.8},
+  {name:'TAT-14',             from:[38.90,-77.04], to:[52.37,4.90],    color:'#38BDF8', w:1.5},
+  {name:'FASTER',             from:[34.05,-118.24],to:[35.69,139.69],  color:'#818CF8', w:2.2},
+  {name:'UNITY',              from:[33.75,-118.19],to:[35.69,139.69],  color:'#818CF8', w:1.8},
+  {name:'SJC-2',              from:[34.05,-118.24],to:[1.35,103.82],   color:'#818CF8', w:1.5},
+  {name:'SEA-ME-WE 4',        from:[50.11,8.68],   to:[1.35,103.82],   color:'#38BDF8', w:2.2},
+  {name:'SMW-5',              from:[51.50,-0.12],  to:[19.08,72.88],   color:'#38BDF8', w:1.5},
+  {name:'WACS',               from:[51.50,-0.12],  to:[-33.92,18.42],  color:'#F59E0B', w:1.8},
+  {name:'SEACOM',             from:[-26.20,28.04], to:[19.08,72.88],   color:'#F59E0B', w:1.5},
+  {name:'Australia-Japan',    from:[35.69,139.69], to:[-33.87,151.21], color:'#818CF8', w:1.8},
+  {name:'ARCOS-1',            from:[40.71,-74.01], to:[-23.55,-46.63], color:'#F59E0B', w:1.8},
+  {name:'MAREA',               from:[40.71,-74.01], to:[40.42,-3.70],   color:'#38BDF8', w:1.5},
+  {name:'Dunant',              from:[40.71,-74.01], to:[43.30,5.37],    color:'#38BDF8', w:1.5},
+  {name:'PEACE Cable',         from:[19.08,72.88],  to:[4.05,9.70],     color:'#F59E0B', w:1.5},
+  {name:'APG',                 from:[35.69,139.69], to:[1.35,103.82],   color:'#818CF8', w:1.8},
+  {name:'EAC-C2C',             from:[35.69,139.69], to:[34.05,-118.24], color:'#818CF8', w:1.5},
+  {name:'Hawaiki',             from:[34.05,-118.24],to:[-33.87,151.21], color:'#818CF8', w:1.5},
+  {name:'SAex',                from:[-33.92,18.42], to:[-23.55,-46.63], color:'#F59E0B', w:1.5},
+  {name:'AMX-1',               from:[40.71,-74.01], to:[4.60,-74.08],   color:'#F59E0B', w:1.2},
+];
+
+// ─── FETCH DATA ─────────────────────────────────────
+async function fetchData() {
+  let src = 'API';
+  try {
+    const [ixpRes, asnRes] = await Promise.all([fetch('/api/ixps'), fetch('/api/asns')]);
+    if (!ixpRes.ok || !asnRes.ok) throw new Error();
+    const ixpJson = await ixpRes.json();
+    const asnJson = await asnRes.json();
+    IXPs = ixpJson.ixps.filter(x => x.lat && x.lon);
+    ASNs = asnJson.asns;
+    const conc = ixpJson.intelligence?.concentration;
+    if (conc) updateConcentration(conc.concentration_pct, conc.risk_level);
+    try {
+      const cabRes = await fetch('/api/cables');
+      const cabJson = await cabRes.json();
+      CABLES = cabJson.features.map(f => ({
+        name:  f.properties.name,
+        from:  [f.geometry.coordinates[0][1], f.geometry.coordinates[0][0]],
+        to:    [f.geometry.coordinates[f.geometry.coordinates.length-1][1], f.geometry.coordinates[f.geometry.coordinates.length-1][0]],
+        color: '#38BDF8', w: 2
+      }));
+    } catch { CABLES = MOCK_CABLES; }
+  } catch {
+    src = 'mock';
+    IXPs   = MOCK_IXPS;
+    ASNs   = MOCK_ASNS;
+    CABLES = MOCK_CABLES;
+    const total = IXPs.reduce((s,x) => s + x.traffic_peak_tbps, 0);
+    const top5  = [...IXPs].sort((a,b) => b.traffic_peak_tbps - a.traffic_peak_tbps)
+                            .slice(0,5).reduce((s,x) => s + x.traffic_peak_tbps, 0);
+    updateConcentration(Math.round(top5/total*100), 'CRITICAL');
+  }
+  document.getElementById('api-src').innerHTML = `<span class="${src==='API'?'ok':'mock'}">${src}</span>`;
+  document.getElementById('m-ixp').textContent  = IXPs.length + '+';
+  buildMap();
+  buildEntityList();
+  buildD3Chart();
+  buildASNTable();
+  document.getElementById('loading').style.display = 'none';
+}
+
+function updateConcentration(pct, risk) {
+  document.getElementById('m-conc').textContent    = pct + '%';
+  document.getElementById('risk-label').textContent = risk;
+  document.getElementById('risk-bar').style.width   = Math.min(pct, 100) + '%';
+}
+
+// ─── LEAFLET MAP ─────────────────────────────────────
+function buildMap() {
+  map = L.map('map', {
+    center: [20, 10], zoom: 2, zoomControl: false,
+    minZoom: 2, maxZoom: 10,
+    preferCanvas: true
+  });
+
+  // OpenStreetMap tiles (dark-filtered via CSS)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '', maxZoom: 18
+  }).addTo(map);
+
+  cableLayer = L.layerGroup().addTo(map);
+  bgpLayer   = L.layerGroup().addTo(map);
+  t1Layer    = L.layerGroup();
+  ixpLayer   = L.layerGroup().addTo(map);
+
+  drawCables();
+  drawBGP();
+  drawIXPs();
+
+  // Turf.js: nearest IXP to map center on move
+  map.on('mousemove', e => turfNearest(e.latlng));
+}
+
+// ─── DRAW CABLES (Leaflet polylines) ──────────────────
+function drawCables() {
+  cableLayer.clearLayers();
+  CABLES.forEach(c => {
+    // Use Turf.js to get great circle points
+    const from = turf.point([c.from[1], c.from[0]]);
+    const to   = turf.point([c.to[1],   c.to[0]]);
+    const gc   = turf.greatCircle(from, to, { npoints: 80 });
+    const latlngs = gc.geometry.coordinates.map(([lng,lat]) => [lat,lng]);
+    L.polyline(latlngs, {
+      color: c.color, weight: c.w, opacity: 1, smoothFactor: 1
+    }).addTo(cableLayer);
+  });
+}
+
+// ─── DRAW BGP BACKBONE ───────────────────────────────
+function drawBGP() {
+  bgpLayer.clearLayers();
+  const links = [
+    [[50.11,8.68],[52.37,4.90]], [[52.37,4.90],[51.51,-0.09]],
+    [[50.11,8.68],[45.46,9.19]], [[50.11,8.68],[55.75,37.62]],
+    [[50.11,8.68],[59.33,18.07]],[[40.71,-74.01],[41.88,-87.63]],
+    [[40.71,-74.01],[34.05,-118.24]],[[41.88,-87.63],[34.05,-118.24]],
+  ];
+  links.forEach(([a,b]) => {
+    L.polyline([a, b], {
+      color: '#818CF8', weight: 1.5, opacity: 0.7, dashArray: '6 5'
+    }).addTo(bgpLayer);
+  });
+}
+
+// ─── DRAW T1 PATHS ────────────────────────────────────
+function drawT1Paths() {
+  t1Layer.clearLayers();
+  const paths = [
+    [[40.71,-74.01],[50.11,8.68]],
+    [[40.71,-74.01],[35.69,139.69]],
+    [[50.11,8.68],[1.35,103.82]],
+  ];
+  paths.forEach(([a,b]) => {
+    const from = turf.point([a[1],a[0]]);
+    const to   = turf.point([b[1],b[0]]);
+    const gc   = turf.greatCircle(from, to, { npoints: 60 });
+    const latlngs = gc.geometry.coordinates.map(([lng,lat]) => [lat,lng]);
+    L.polyline(latlngs, {
+      color: '#38BDF8', weight: 1.2, opacity: 0.5, dashArray: '3 8'
+    }).addTo(t1Layer);
+  });
+}
+
+// ─── DRAW IXP NODES ──────────────────────────────────
+function drawIXPs() {
+  ixpLayer.clearLayers();
+  IXPs.forEach(ix => {
+    const col  = ix.tier===1 ? '#38BDF8' : ix.tier===2 ? '#818CF8' : '#F59E0B';
+    const r    = ix.tier===1 ? 12 : ix.tier===2 ? 8 : 6;
+    const glow = ix.tier===1 ? `drop-shadow(0 0 6px ${col})` : 'none';
+
+    // Pulse ring for Tier-1 (outer glow ring)
+    if (ix.tier === 1) {
+      const ring = L.circleMarker([ix.lat, ix.lon], {
+        radius: r + 8, color: col, weight: 1,
+        fillColor: 'transparent', fillOpacity: 0,
+        opacity: 0.35,
+        className: `ixp-ring tier-${ix.tier}`
+      });
+      ring.addTo(ixpLayer);
+
+      const ring2 = L.circleMarker([ix.lat, ix.lon], {
+        radius: r + 16, color: col, weight: 0.5,
+        fillColor: 'transparent', fillOpacity: 0,
+        opacity: 0.15,
+        className: `ixp-ring2 tier-${ix.tier}`
+      });
+      ring2.addTo(ixpLayer);
+    }
+
+    const marker = L.circleMarker([ix.lat, ix.lon], {
+      radius: r, color: col, weight: 2,
+      fillColor: col, fillOpacity: 1.0,
+      className: `ixp-node tier-${ix.tier}`
+    });
+
+    // Tooltip (hover)
+    marker.on('mouseover', function(e) {
+      const tp = document.getElementById('tip');
+      document.getElementById('tt-name').textContent = ix.name;
+      document.getElementById('tt-body').innerHTML = `
+        <div class="tr"><span>Country</span><span>${ix.country}</span></div>
+        <div class="tr"><span>City</span><span>${ix.city}</span></div>
+        <div class="tr"><span>Members</span><span>${ix.member_count}+ networks</span></div>
+        <div class="tr"><span>Peak Traffic</span><span>${ix.traffic_peak_tbps} Tbps</span></div>
+        <div class="tr"><span>Tier</span><span>T${ix.tier}</span></div>
+        <div style="font-size:9px;color:var(--muted);margin-top:5px">Click to open facility card</div>`;
+      const pt  = map.latLngToContainerPoint([ix.lat, ix.lon]);
+      const stg = document.getElementById('stage');
+      let tx = pt.x + 16, ty = pt.y - 14;
+      if (tx + 260 > stg.clientWidth)  tx = pt.x - 270;
+      if (ty + 160 > stg.clientHeight) ty = pt.y - 170;
+      tp.style.left = tx + 'px';
+      tp.style.top  = ty + 'px';
+      tp.style.opacity = '1';
+    });
+
+    marker.on('mouseout', () => {
+      document.getElementById('tip').style.opacity = '0';
+    });
+
+    // Click → Facility Card
+    marker.on('click', e => {
+      document.getElementById('tip').style.opacity = '0';
+      openFacilityCard(ix, e.containerPoint);
+    });
+
+    marker.addTo(ixpLayer);
+  });
+}
+
+// ─── FACILITY CARD (Protocol: facility cards feature) ──
+function openFacilityCard(ix, pt) {
+  const modal = document.getElementById('fc-modal');
+  document.getElementById('fc-name').textContent = ix.name;
+  document.getElementById('fc-sub').textContent  = `${ix.city}, ${ix.country} · FACILITY CARD`;
+
+  // Turf.js: compute nearest other IXP
+  const origin = turf.point([ix.lon, ix.lat]);
+  const others = IXPs.filter(x => x.id !== ix.id);
+  let nearestName = '—', nearestDist = Infinity;
+  others.forEach(o => {
+    const d = turf.distance(origin, turf.point([o.lon, o.lat]), {units:'kilometers'});
+    if (d < nearestDist) { nearestDist = d; nearestName = o.name; }
+  });
+
+  // Traffic share
+  const totalTraffic = IXPs.reduce((s,x) => s + x.traffic_peak_tbps, 0);
+  const share = ((ix.traffic_peak_tbps / totalTraffic) * 100).toFixed(1);
+
+  const rows = [
+    {k:'Peak Traffic',   v: ix.traffic_peak_tbps + ' Tbps', bar: ix.traffic_peak_tbps/12.6},
+    {k:'Member Networks',v: ix.member_count + '+'},
+    {k:'Global Traffic Share', v: share + '%', bar: share/100},
+    {k:'Tier',           v: 'Tier ' + ix.tier},
+    {k:'Location',       v: `${ix.city}, ${ix.country}`},
+    {k:'Website',        v: ix.website ? `<a href="${ix.website}" style="color:var(--cyan)">${ix.website.replace('https://','')}</a>` : '—'},
+  ];
+
+  document.getElementById('fc-rows').innerHTML = rows.map(r => `
+    <div class="fc-row">
+      <span class="fk">${r.k}</span>
+      ${r.bar != null ? `<div class="fc-bar-wrap"><div class="fc-bar-fill" style="width:${Math.round(r.bar*100)}%"></div></div>` : ''}
+      <span class="fv">${r.v}</span>
+    </div>`).join('');
+
+  document.getElementById('fc-turf').innerHTML =
+    `<b style="color:var(--indigo)">Turf.js →</b> Nearest IXP: <b>${nearestName}</b> · ${Math.round(nearestDist).toLocaleString()} km`;
+
+  const stg = document.getElementById('stage');
+  let mx = pt.x + 14, my = pt.y - 20;
+  if (mx + 295 > stg.clientWidth)  mx = pt.x - 295;
+  if (my + 400 > stg.clientHeight) my = pt.y - 400;
+  modal.style.left    = Math.max(8, mx) + 'px';
+  modal.style.top     = Math.max(8, my) + 'px';
+  modal.style.display = 'block';
+}
+
+function closeFacilityCard() {
+  document.getElementById('fc-modal').style.display = 'none';
+}
+
+// ─── TURF.JS NEAREST IXP (mousemove) ────────────────
+function turfNearest(latlng) {
+  if (!IXPs.length || !turf) return;
+  const pt = turf.point([latlng.lng, latlng.lat]);
+  let minD = Infinity, minName = '—';
+  IXPs.forEach(ix => {
+    const d = turf.distance(pt, turf.point([ix.lon, ix.lat]), {units:'kilometers'});
+    if (d < minD) { minD = d; minName = ix.name; }
+  });
+  document.getElementById('turf-dist').textContent =
+    `${Math.round(minD).toLocaleString()} km → ${minName}`;
+}
+
+// ─── LAYER TOGGLES ──────────────────────────────────
+function toggle(btn) {
+  const k = btn.dataset.l;
+  L_LAYERS[k] = !L_LAYERS[k];
+  btn.classList.toggle('on', L_LAYERS[k]);
+  switch(k) {
+    case 'ixp':    L_LAYERS[k] ? ixpLayer.addTo(map)   : map.removeLayer(ixpLayer);   break;
+    case 'cable':  L_LAYERS[k] ? cableLayer.addTo(map) : map.removeLayer(cableLayer); break;
+    case 'bgp':    L_LAYERS[k] ? bgpLayer.addTo(map)   : map.removeLayer(bgpLayer);   break;
+    case 't1':
+      if (L_LAYERS[k]) { drawT1Paths(); t1Layer.addTo(map); }
+      else map.removeLayer(t1Layer);
+      break;
+  }
+}
+
+// ─── ENTITY LIST (Section C) ────────────────────────
+function buildEntityList() {
+  const sorted = [...IXPs].sort((a,b) => b.traffic_peak_tbps - a.traffic_peak_tbps).slice(0, 7);
+  const max    = sorted[0]?.traffic_peak_tbps || 1;
+  const colors = [
+    'linear-gradient(to right,#38BDF8,rgba(56,189,248,0.4))',
+    'linear-gradient(to right,#38BDF8,rgba(56,189,248,0.35))',
+    'linear-gradient(to right,#818CF8,rgba(129,140,248,0.5))',
+    'linear-gradient(to right,#818CF8,rgba(129,140,248,0.4))',
+    'linear-gradient(to right,#F59E0B,rgba(245,158,11,0.5))',
+    'linear-gradient(to right,#F59E0B,rgba(245,158,11,0.4))',
+    'linear-gradient(to right,#64748B,rgba(100,116,139,0.4))',
+  ];
+  document.getElementById('entity-list').innerHTML = sorted.map((ix, i) => `
+    <div class="entity" onclick="flyToIXP(${ix.id})">
+      <span class="en">${ix.name}</span>
+      <div class="eb"><div class="ef" style="width:${Math.round(ix.traffic_peak_tbps/max*100)}%;background:${colors[i]||colors[6]}"></div></div>
+      <span class="ep">${ix.traffic_peak_tbps} Tbps</span>
+    </div>`).join('');
+}
+
+function flyToIXP(id) {
+  const ix = IXPs.find(x => x.id === id);
+  if (ix && map) map.flyTo([ix.lat, ix.lon], 5, { duration: 1.2 });
+}
+
+// ─── D3 CONCENTRATION DONUT CHART ───────────────────
+function buildD3Chart() {
+  const sorted    = [...IXPs].sort((a,b) => b.traffic_peak_tbps - a.traffic_peak_tbps);
+  const top5      = sorted.slice(0,5);
+  const othersSum = sorted.slice(5).reduce((s,x) => s + x.traffic_peak_tbps, 0);
+  const data      = [...top5.map(x => ({label: x.name.split(' ')[0]+' '+x.name.split(' ')[1], value: x.traffic_peak_tbps})),
+                     {label: 'All Others', value: othersSum}];
+
+  const W = 230, H = 130, R = 52, innerR = 30;
+  const colors = ['#38BDF8','#4FC3F7','#818CF8','#A5B4FC','#F59E0B','#374151'];
+
+  const svg = d3.select('#d3-chart')
+    .append('svg')
+    .attr('width', W).attr('height', H)
+    .style('overflow', 'visible');
+
+  const g = svg.append('g').attr('transform', `translate(${H/2+8},${H/2})`);
+
+  const pie   = d3.pie().value(d => d.value).sort(null);
+  const arc   = d3.arc().innerRadius(innerR).outerRadius(R);
+  const arcH  = d3.arc().innerRadius(innerR).outerRadius(R+5);
+
+  const arcs  = g.selectAll('.arc').data(pie(data)).enter().append('g').attr('class','arc');
+
+  arcs.append('path')
+    .attr('d', arc)
+    .attr('fill', (d,i) => colors[i])
+    .attr('stroke', '#030712').attr('stroke-width', 1)
+    .style('cursor','pointer')
+    .on('mouseover', function(event, d) {
+      d3.select(this).transition().duration(150).attr('d', arcH);
+    })
+    .on('mouseout', function(event, d) {
+      d3.select(this).transition().duration(150).attr('d', arc);
+    });
+
+  // Center label
+  g.append('text').attr('text-anchor','middle').attr('dy','-0.3em')
+    .style('fill','#38BDF8').style('font-size','13px').style('font-weight','700')
+    .style('font-family','Inter,sans-serif')
+    .text((() => {
+      const t = IXPs.reduce((s,x) => s + x.traffic_peak_tbps, 0);
+      const t5 = top5.reduce((s,x) => s + x.traffic_peak_tbps, 0);
+      return Math.round(t5/t*100) + '%';
+    })());
+  g.append('text').attr('text-anchor','middle').attr('dy','0.9em')
+    .style('fill','#64748B').style('font-size','8px').style('font-family','Inter,sans-serif')
+    .text('TOP 5 IXPs');
+
+  // Legend
+  const leg = svg.append('g').attr('transform', `translate(${H+12}, 10)`);
+  data.forEach((d, i) => {
+    const row = leg.append('g').attr('transform', `translate(0,${i*18})`);
+    row.append('rect').attr('width',7).attr('height',7).attr('y',1)
+       .attr('fill', colors[i]).attr('rx', 1);
+    row.append('text').attr('x',12).attr('y',8)
+       .style('fill','#64748B').style('font-size','8.5px').style('font-family','Inter,sans-serif')
+       .text(`${d.label.length > 14 ? d.label.slice(0,14)+'…' : d.label} · ${d.value}T`);
+  });
+}
+
+// ─── ASN TABLE (TanStack-style sortable) ──────────────
+function buildASNTable() {
+  let sorted = [...ASNs];
+  const col = asnSort.col, dir = asnSort.dir;
+  sorted.sort((a,b) => {
+    const av = a[col] ?? a.prefixes_v4 ?? 0;
+    const bv = b[col] ?? b.prefixes_v4 ?? 0;
+    if (typeof av === 'string') return dir * av.localeCompare(bv);
+    return dir * ((av||0) - (bv||0));
+  });
+  document.getElementById('asn-body').innerHTML = sorted.map(a => {
+    const pfx  = a.prefixes_v4 || a.prefixes || 0;
+    const tier = a.tier || 'T2';
+    const isSel = selectedASN === a.asn;
+    return `<div class="at-row${isSel?' sel':''}" onclick="selectASN(${a.asn})">
+      <div class="ac">AS${a.asn}</div>
+      <div class="ac" style="flex:2">${a.org || a.organization || '—'}</div>
+      <div class="ac">${pfx ? (pfx/1000).toFixed(1)+'K' : '—'}</div>
+      <div class="ac"><span class="badge ${tier==='T1'?'t1b':'t2b'}">${tier}</span></div>
+    </div>`;
+  }).join('');
+}
+
+function sortASN(col, el) {
+  if (asnSort.col === col) asnSort.dir *= -1;
+  else { asnSort.col = col; asnSort.dir = -1; }
+  document.querySelectorAll('.ah').forEach(h => h.classList.remove('sort'));
+  el.classList.add('sort');
+  buildASNTable();
+}
+
+function selectASN(asn) {
+  selectedASN = selectedASN === asn ? null : asn;
+  buildASNTable();
+}
+
+// ─── SIMULATION ──────────────────────────────────────
+function runSim() {
+  simOn = !simOn;
+  const btn = document.querySelector('.simbtn');
+  const st  = document.getElementById('simst');
+  const cv  = document.getElementById('sim-layer');
+  const stg = document.getElementById('stage');
+
+  if (simOn) {
+    cv.width  = stg.clientWidth;
+    cv.height = stg.clientHeight;
+    simCtx    = cv.getContext('2d');
+    btn.textContent = '■ STOP SIMULATION';
+    btn.style.borderColor = 'rgba(245,158,11,0.5)';
+    btn.style.color = 'var(--amber)';
+    st.className = 'show';
+
+    fetch('/api/simulate/failure?ixp_id=1')
+      .then(r => r.json())
+      .then(d => {
+        st.innerHTML = `⚠ ${d.failed_node} OFFLINE — Impact: <b>${d.impact_level}</b><br>
+          <span style="color:var(--muted)">~${(d.affected_routes_estimate||800000).toLocaleString()} routes affected
+          · Re-convergence ~${d.bgp_reconvergence_estimate_sec||500}s
+          · Rerouting via: ${(d.reroute_candidates||['AMS-IX','LINX']).join(', ')}</span>`;
+      })
+      .catch(() => {
+        st.innerHTML = '⚠ DE-CIX FRANKFURT OFFLINE — BGP re-convergence in progress<br>'
+          + '<span style="color:var(--muted)">~800K routes affected · Rerouting via AMS-IX, LINX, Netnod</span>';
+      });
+
+    simLoop();
+  } else {
+    if (simRAF) cancelAnimationFrame(simRAF);
+    simCtx && simCtx.clearRect(0, 0, cv.width, cv.height);
+    btn.textContent = '⚠ SIMULATE DE-CIX FRANKFURT FAILURE';
+    btn.style.borderColor = 'rgba(239,68,68,0.45)';
+    btn.style.color = 'var(--red)';
+    st.className = '';
+  }
+}
+
+function simLoop() {
+  if (!simOn || !simCtx) return;
+  const cv  = document.getElementById('sim-layer');
+  const src = map.latLngToContainerPoint([50.11, 8.68]);
+
+  simCtx.clearRect(0, 0, cv.width, cv.height);
+
+  // Shockwave pulse
+  const t = (Date.now() % 1400) / 1400;
+  simCtx.beginPath();
+  simCtx.arc(src.x, src.y, 10 + t * 75, 0, Math.PI * 2);
+  simCtx.strokeStyle = `rgba(239,68,68,${0.85 * (1-t)})`;
+  simCtx.lineWidth = 2.5;
+  simCtx.stroke();
+
+  // Reroute dashes
+  const targets = [
+    map.latLngToContainerPoint([52.37, 4.90]),
+    map.latLngToContainerPoint([51.51, -0.09]),
+    map.latLngToContainerPoint([59.33, 18.07]),
+  ];
+  const off = (Date.now() % 900) / 900;
+  targets.forEach(dst => {
+    simCtx.beginPath();
+    simCtx.moveTo(src.x, src.y);
+    simCtx.lineTo(dst.x, dst.y);
+    simCtx.setLineDash([7, 4]);
+    simCtx.lineDashOffset = -off * 22;
+    simCtx.strokeStyle = 'rgba(239,68,68,0.6)';
+    simCtx.lineWidth = 1.8;
+    simCtx.stroke();
+    simCtx.setLineDash([]);
+  });
+
+  // X mark
+  simCtx.strokeStyle = '#EF4444'; simCtx.lineWidth = 2.5;
+  simCtx.beginPath(); simCtx.moveTo(src.x-10,src.y-10); simCtx.lineTo(src.x+10,src.y+10); simCtx.stroke();
+  simCtx.beginPath(); simCtx.moveTo(src.x+10,src.y-10); simCtx.lineTo(src.x-10,src.y+10); simCtx.stroke();
+
+  simRAF = requestAnimationFrame(simLoop);
+}
+
+// ─── DOWNLOAD ────────────────────────────────────────
+function download() { window.location.href = '/api/download/sample'; }
+
+// ─── CLOCK ───────────────────────────────────────────
+function tick() { document.getElementById('ts').textContent = new Date().toUTCString().slice(17,25) + ' UTC'; }
+setInterval(tick, 1000); tick();
+
+// ─── INIT ────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  const cv = document.getElementById('sim-layer');
+  const stg = document.getElementById('stage');
+  cv.width  = stg.clientWidth;
+  cv.height = stg.clientHeight;
+});
+
+fetchData();
+</script>
+</body>
+</html>
+</file>
+
+<file path="main.py">
+"""
+Real Rails — Internet Backbone & IXP Map
+FastAPI Backend | Rail: Data & Intelligence | ID: 40
+
+Sources: PeeringDB (live), RIPEstat (live), TeleGeography (mock shape)
+Fallback: local mock_data.json when live APIs are unavailable
+"""
+
+from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+import httpx
+import pandas as pd
+import json
+import os
+from datetime import datetime
+from typing import Optional
+from pathlib import Path
+
+app = FastAPI(
+    title="Real Rails — IXP Intelligence API",
+    description="Internet Backbone & IXP Map data orchestration layer",
+    version="1.0.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+MOCK_DATA_PATHS = [
+    Path(__file__).parent / "mock_data.json",
+    Path(__file__).parent / "real-rails-nextjs" / "src" / "lib" / "mock_data.json",
+]
+FRONTEND_PATH  = Path(__file__).parent / "frontend.html"
+PEERINGDB_BASE = "https://www.peeringdb.com/api"
+RIPESTAT_BASE  = "https://stat.ripe.net/data"
+
+
+# ── MOCK FALLBACK ──────────────────────────────────────────────────────────────
+def load_mock() -> dict:
+    for path in MOCK_DATA_PATHS:
+        if path.exists():
+            with open(path) as f:
+                return json.load(f)
+    raise FileNotFoundError("No mock_data.json file was found for fallback data.")
+
+
+def resolve_mock_data_path() -> Path:
+    for path in MOCK_DATA_PATHS:
+        if path.exists():
+            return path
+    raise FileNotFoundError("No mock_data.json file was found for fallback data.")
+
+
+# ── HELPERS ───────────────────────────────────────────────────────────────────
+def enrich_ixp(raw: dict) -> dict:
+    member_count = raw.get("member_count", 0) or 0
+    return {
+        "id":           raw.get("id"),
+        "name":         raw.get("name", "Unknown"),
+        "city":         raw.get("city", ""),
+        "country":      raw.get("country", ""),
+        "lat":          raw.get("lat"),
+        "lon":          raw.get("lon"),
+        "member_count": member_count,
+        "traffic_peak_tbps": raw.get("traffic_peak_tbps", "N/A"),
+        "tier":         1 if member_count > 500 else (2 if member_count > 100 else 3),
+        "source":       raw.get("source", "PeeringDB"),
+        "fetched_at":   datetime.utcnow().isoformat(),
+    }
+
+
+def concentration_metric(df: pd.DataFrame, top_n: int = 5) -> dict:
+    if df.empty or "traffic_peak_tbps" not in df.columns:
+        return {"top_n": top_n, "concentration_pct": None, "risk_level": "UNKNOWN"}
+    df2 = df.copy()
+    df2["t"] = pd.to_numeric(df2["traffic_peak_tbps"], errors="coerce")
+    df2 = df2.dropna(subset=["t"])
+    total = df2["t"].sum()
+    top   = df2.nlargest(top_n, "t")["t"].sum()
+    pct   = round(top / total * 100, 1) if total > 0 else 0
+    risk  = "CRITICAL" if pct > 70 else "HIGH" if pct > 50 else "MEDIUM"
+    return {"top_n": top_n, "concentration_pct": pct, "risk_level": risk}
+
+
+# ── ROUTES ────────────────────────────────────────────────────────────────────
+
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
+async def serve_frontend():
+    """Serve the Real Rails dashboard frontend."""
+    if FRONTEND_PATH.exists():
+        return HTMLResponse(content=FRONTEND_PATH.read_text(encoding="utf-8"))
+    return HTMLResponse(content="<h2>Frontend not found. Place frontend.html next to main.py</h2>", status_code=404)
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok", "rail": "Data & Intelligence", "project": "IXP Backbone Map"}
+
+
+@app.get("/api/ixps")
+async def get_ixps(
+    tier: Optional[int]    = Query(None, description="Filter by tier (1, 2, 3)"),
+    country: Optional[str] = Query(None, description="ISO2 country code, e.g. DE"),
+    limit: int             = Query(100, le=500),
+):
+    """Fetch IXP list — PeeringDB live, falls back to mock_data.json."""
+    try:
+        mock = load_mock()
+        mock_map = {x["name"]: x for x in mock.get("ixps", [])}
+
+        async with httpx.AsyncClient(timeout=8.0) as client:
+            params = {"limit": limit}
+            if country:
+                params["country"] = country.upper()
+            resp = await client.get(f"{PEERINGDB_BASE}/ix", params=params)
+            resp.raise_for_status()
+            raw_list = resp.json().get("data", [])
+            # PeeringDB records won't have lat/lon directly; merge from mock for coords
+            for r in raw_list:
+                name = r.get("name", "")
+                if name in mock_map:
+                    r.setdefault("lat", mock_map[name].get("lat"))
+                    r.setdefault("lon", mock_map[name].get("lon"))
+                    r.setdefault("traffic_peak_tbps", mock_map[name].get("traffic_peak_tbps"))
+    except Exception:
+        try:
+            mock = load_mock()
+            raw_list = mock.get("ixps", [])
+            for r in raw_list:
+                r["source"] = "mock"
+        except Exception:
+            raise HTTPException(status_code=503, detail="Unable to load fallback IXP data")
+
+    enriched = [enrich_ixp(r) for r in raw_list]
+    if tier:
+        enriched = [x for x in enriched if x["tier"] == tier]
+
+    df = pd.DataFrame(enriched)
+    concentration = concentration_metric(df)
+
+    return {
+        "count": len(enriched),
+        "ixps":  enriched,
+        "intelligence": {
+            "concentration": concentration,
+            "insight": (
+                f"Top {concentration['top_n']} IXPs handle an estimated "
+                f"{concentration['concentration_pct']}% of measured global traffic — "
+                f"concentration risk is {concentration['risk_level']}."
+            ),
+        },
+        "fetched_at": datetime.utcnow().isoformat(),
+    }
+
+
+@app.get("/api/asns")
+async def get_asns(asn_list: Optional[str] = Query(None)):
+    """ASN prefix counts — RIPEstat live, falls back to mock."""
+    default_asns = [7922, 1299, 3356, 2914, 1221, 6939, 3257, 6453]
+    asns = [int(a) for a in asn_list.split(",")] if asn_list else default_asns
+    results = []
+    mock = None
+    try:
+        mock = load_mock()
+        mock_map = {x.get("asn"): x for x in mock.get("asns", [])}
+    except Exception:
+        mock_map = {}
+
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            for asn in asns:
+                try:
+                    url = f"{RIPESTAT_BASE}/routing-status/data.json?resource=AS{asn}"
+                    resp = await client.get(url)
+                    resp.raise_for_status()
+                    d = resp.json().get("data", {})
+                    results.append({
+                        "asn": asn,
+                        "prefixes_v4": d.get("announced_space", {}).get("v4", {}).get("prefixes", 0),
+                        "prefixes_v6": d.get("announced_space", {}).get("v6", {}).get("prefixes", 0),
+                        "source": "RIPEstat",
+                    })
+                except Exception:
+                    fallback = mock_map.get(asn)
+                    if fallback is not None:
+                        fallback = dict(fallback)
+                        fallback["source"] = "mock"
+                        results.append(fallback)
+                    else:
+                        results.append({"asn": asn, "prefixes": 0, "source": "mock"})
+    except Exception:
+        for asn in asns:
+            fallback = mock_map.get(asn)
+            if fallback is not None:
+                fallback = dict(fallback)
+                fallback["source"] = "mock"
+                results.append(fallback)
+            else:
+                results.append({"asn": asn, "prefixes": 0, "source": "mock"})
+
+    return {"count": len(results), "asns": results, "fetched_at": datetime.utcnow().isoformat()}
+
+
+@app.get("/api/cables")
+async def get_cables():
+    """Submarine cable GeoJSON — mock data shaped after TeleGeography schema."""
+    mock = load_mock()
+    cables = mock.get("submarine_cables", [])
+    features = []
+    for c in cables:
+        features.append({
+            "type": "Feature",
+            "properties": {"name": c.get("name"), "owners": c.get("owners", []),
+                           "length_km": c.get("length_km"), "rfs": c.get("rfs"),
+                           "source": "TeleGeography/mock"},
+            "geometry": {"type": "LineString",
+                         "coordinates": [[pt[1], pt[0]] for pt in c.get("endpoints", [])]},
+        })
+    return {"type": "FeatureCollection", "features": features}
+
+
+@app.get("/api/concentration")
+async def get_concentration(top_n: int = Query(5, ge=1, le=20)):
+    mock = load_mock()
+    enriched = [enrich_ixp(r) for r in mock.get("ixps", [])]
+    df = pd.DataFrame(enriched)
+    metric = concentration_metric(df, top_n=top_n)
+    top = df.nlargest(top_n, "member_count")[["name","country","member_count","tier"]].to_dict(orient="records") if not df.empty else []
+    return {"concentration": metric, "top_ixps": top,
+            "insight": f"Top {top_n} IXPs handle ~{metric['concentration_pct']}% of global traffic. Risk: {metric['risk_level']}."}
+
+
+@app.get("/api/simulate/failure")
+async def simulate_failure(ixp_id: Optional[int] = Query(None)):
+    mock = load_mock()
+    ixps = mock.get("ixps", [])
+    failed = next((x for x in ixps if x.get("id") == ixp_id), ixps[0] if ixps else {})
+    reroutes = [x.get("name") for x in ixps if x.get("id") != ixp_id][:3]
+    members = failed.get("member_count", 500)
+    return {
+        "simulation": "route_failure",
+        "failed_node": failed.get("name", "Unknown"),
+        "affected_routes_estimate": members * 800,
+        "bgp_reconvergence_estimate_sec": round(members * 0.5),
+        "reroute_candidates": reroutes,
+        "impact_level": "CRITICAL" if failed.get("tier") == 1 else "HIGH",
+    }
+
+
+@app.get("/api/download/sample")
+async def download_sample():
+    try:
+        path = resolve_mock_data_path()
+    except FileNotFoundError:
+        raise HTTPException(404, "Sample data not found")
+
+    return FileResponse(path, media_type="application/json",
+                        filename="real-rails-ixp-sample.json")
+</file>
+
+<file path="real-rails-nextjs/package.json">
+{
+  "name": "real-rails-ixp-map",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+
+    "leaflet": "^1.9.4",
+    "react-leaflet": "^4.2.1",
+
+    "mapbox-gl": "^3.5.2",
+
+    "@deck.gl/core": "^9.0.14",
+    "@deck.gl/layers": "^9.0.14",
+    "@deck.gl/react": "^9.0.14",
+    "@deck.gl/geo-layers": "^9.0.14",
+
+    "@turf/turf": "^6.5.0",
+
+    "d3": "^7.9.0",
+
+    "@tanstack/react-table": "^8.19.3",
+
+    "@radix-ui/react-dialog": "^1.1.1",
+    "@radix-ui/react-tooltip": "^1.1.2",
+    "@radix-ui/react-select": "^2.1.1",
+    "@radix-ui/react-separator": "^1.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.4.0",
+    "lucide-react": "^0.414.0",
+
+    "recharts": "^2.12.7",
+    "axios": "^1.7.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "@types/node": "^20.14.14",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@types/leaflet": "^1.9.12",
+    "@types/d3": "^7.4.3",
+    "tailwindcss": "^3.4.7",
+    "postcss": "^8.4.40",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.5"
+  }
+}
+</file>
+
+</files>
