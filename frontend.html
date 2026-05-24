@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Real Rails — Internet Backbone & IXP Map</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#030712;--surface:#0B1117;--surface2:#0F1922;
+  --cyan:#38BDF8;--indigo:#818CF8;--border:#1F2937;
+  --text:#E2E8F0;--muted:#64748B;--green:#22C55E;--amber:#F59E0B;--red:#EF4444;
+  --font:'JetBrains Mono',monospace;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px}
+
+/* ── HEADER ── */
+#header{
+  height:44px;background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0;
+}
+.logo{display:flex;align-items:center;gap:10px}
+.tag{font-size:9px;background:rgba(56,189,248,0.12);color:var(--cyan);
+  border:1px solid rgba(56,189,248,0.3);padding:2px 8px;border-radius:2px;letter-spacing:1.5px}
+.title{font-size:14px;font-weight:600;color:var(--cyan);letter-spacing:0.4px}
+.meta{font-size:9px;color:var(--muted);letter-spacing:0.3px}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 6px var(--green);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* ── LAYOUT ── */
+#wrap{display:flex;height:calc(100vh - 44px)}
+#stage{flex:0 0 70%;position:relative;overflow:hidden;border-right:1px solid var(--border)}
+#sidebar{flex:0 0 30%;background:var(--surface);overflow-y:auto;display:flex;flex-direction:column}
+#sidebar::-webkit-scrollbar{width:3px}
+#sidebar::-webkit-scrollbar-thumb{background:var(--border)}
+
+/* ── MAP ── */
+#map{width:100%;height:100%;display:block;cursor:crosshair}
+#tip{
+  position:absolute;background:rgba(11,17,23,0.97);border:1px solid var(--cyan);
+  padding:9px 13px;border-radius:4px;pointer-events:none;opacity:0;
+  transition:opacity .15s;z-index:50;min-width:170px;
+}
+#tip .tn{font-weight:600;color:var(--cyan);font-size:12px;margin-bottom:5px}
+#tip .tr{display:flex;justify-content:space-between;gap:14px;font-size:10px;padding:2px 0}
+#tip .tr span:first-child{color:var(--muted)}
+#tip .tr span:last-child{color:var(--text)}
+#legend{
+  position:absolute;bottom:14px;left:14px;background:rgba(11,17,23,0.92);
+  border:1px solid var(--border);border-radius:4px;padding:9px 12px;font-size:9px;
+}
+.lr{display:flex;align-items:center;gap:7px;margin-bottom:5px;color:var(--muted)}
+.lr:last-child{margin-bottom:0}
+.ld{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.ll{width:20px;height:0;flex-shrink:0}
+#sim-overlay{position:absolute;inset:0;pointer-events:none}
+#sim-cv{position:absolute;inset:0;width:100%;height:100%}
+
+/* ── SIDEBAR SECTIONS ── */
+.sec{padding:13px 14px;border-bottom:1px solid var(--border)}
+.slabel{
+  font-size:9px;color:var(--cyan);letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:9px;display:flex;align-items:center;gap:7px
+}
+.slabel::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(56,189,248,0.3),transparent)}
+
+/* ── METRIC CARDS ── */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px}
+.mc{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:9px 11px}
+.mc.hi{border-color:rgba(56,189,248,0.35)}
+.mv{font-size:21px;font-weight:600;color:var(--cyan);line-height:1}
+.ml{font-size:9px;color:var(--muted);margin-top:3px;letter-spacing:0.4px}
+.mv.danger{color:var(--red)}
+
+/* ── PROSE ── */
+.prose{font-size:11px;color:#94A3B8;line-height:1.65}
+.prose strong{color:var(--text)}
+
+/* ── BARS ── */
+.entity{display:flex;align-items:center;gap:8px;padding:5px 8px;
+  background:var(--surface2);border:1px solid var(--border);border-radius:3px;margin-bottom:4px}
+.en{font-size:10px;color:var(--text);min-width:130px}
+.eb{flex:1;background:rgba(255,255,255,0.05);height:4px;border-radius:2px;overflow:hidden}
+.ef{height:100%;border-radius:2px}
+.ep{font-size:10px;color:var(--cyan);min-width:50px;text-align:right}
+
+/* conc bar */
+.cbar{margin-top:9px}
+.cbrow{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px}
+.cbrow span:last-child{color:var(--red);font-weight:600}
+.ctrack{background:rgba(255,255,255,0.05);border-radius:2px;height:6px;overflow:hidden}
+.cfill{height:100%;background:linear-gradient(to right,#F59E0B,#EF4444);border-radius:2px;transition:width .6s}
+
+/* ── FILTERS ── */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.fb{
+  background:var(--surface2);border:1px solid var(--border);color:var(--muted);
+  font-family:var(--font);font-size:10px;padding:6px 9px;border-radius:3px;
+  cursor:pointer;text-align:left;transition:all .15s;letter-spacing:0.3px
+}
+.fb:hover,.fb.on{border-color:var(--cyan);color:var(--cyan);background:rgba(56,189,248,0.07);
+  box-shadow:inset 0 0 0 1px rgba(56,189,248,0.3)}
+
+/* ── ASN TABLE ── */
+.at{width:100%;border-collapse:collapse;margin-top:8px;font-size:10px}
+.at th{color:var(--muted);text-align:left;padding:3px 5px;
+  border-bottom:1px solid var(--border);font-weight:400;letter-spacing:0.4px}
+.at td{padding:4px 5px;border-bottom:1px solid rgba(31,41,55,0.4);color:var(--text)}
+.at tr:hover td{background:rgba(56,189,248,0.04)}
+.badge{display:inline-block;padding:1px 6px;border-radius:2px;font-size:9px;border:1px solid}
+.t1b{color:var(--cyan);border-color:rgba(56,189,248,0.4);background:rgba(56,189,248,0.08)}
+.t2b{color:var(--indigo);border-color:rgba(129,140,248,0.4);background:rgba(129,140,248,0.08)}
+
+/* ── SIM BUTTON ── */
+.simbtn{
+  width:100%;background:var(--surface2);border:1px solid rgba(239,68,68,0.45);
+  color:var(--red);font-family:var(--font);font-size:10px;padding:6px 10px;
+  border-radius:3px;cursor:pointer;letter-spacing:0.3px;transition:all .15s;margin-top:7px
+}
+.simbtn:hover{background:rgba(239,68,68,0.1);box-shadow:0 0 10px rgba(239,68,68,0.2)}
+#simst{font-size:9px;margin-top:5px;padding:6px 9px;border-radius:3px;display:none}
+#simst.show{display:block;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.4);color:var(--red)}
+
+/* ── LOADING ── */
+#loading{
+  position:absolute;inset:0;background:var(--bg);display:flex;
+  align-items:center;justify-content:center;flex-direction:column;gap:10px;z-index:200
+}
+.spin{width:28px;height:28px;border:2px solid var(--border);
+  border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ltext{font-size:10px;color:var(--muted);letter-spacing:0.5px}
+
+/* ── DOWNLOAD BTN ── */
+#dlbtn{
+  margin:12px 14px;background:var(--surface2);border:1px solid var(--border);
+  color:var(--cyan);font-family:var(--font);font-size:11px;padding:9px 14px;
+  border-radius:3px;cursor:pointer;display:flex;align-items:center;gap:7px;
+  letter-spacing:0.4px;transition:all .15s;width:calc(100% - 28px)
+}
+#dlbtn:hover{border-color:var(--cyan);background:rgba(56,189,248,0.08);box-shadow:0 0 12px rgba(56,189,248,0.15)}
+
+/* ── API STATUS ── */
+#apist{font-size:9px;color:var(--muted);padding:6px 14px;border-top:1px solid var(--border)}
+#apist span{color:var(--green)}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div class="logo">
+    <div class="pulse"></div>
+    <span class="tag">REAL RAILS</span>
+    <span class="title">Internet Backbone &amp; IXP Intelligence Map</span>
+  </div>
+  <div class="meta">DATA &amp; INTELLIGENCE RAIL &nbsp;·&nbsp; ID: 40 &nbsp;·&nbsp; <span id="ts"></span></div>
+</div>
+
+<div id="wrap">
+
+  <!-- ── STAGE (70%) ── -->
+  <div id="stage">
+    <div id="loading"><div class="spin"></div><div class="ltext">INITIALISING NETWORK LAYER...</div></div>
+    <canvas id="map"></canvas>
+
+    <div id="tip">
+      <div class="tn" id="tt-name"></div>
+      <div id="tt-body"></div>
+    </div>
+
+    <div id="legend">
+      <div class="lr"><div class="ld" style="background:#38BDF8;box-shadow:0 0 5px #38BDF8"></div>Tier-1 IXP</div>
+      <div class="lr"><div class="ld" style="background:#818CF8"></div>Tier-2 IXP</div>
+      <div class="lr"><div class="ld" style="background:#F59E0B"></div>Regional IXP</div>
+      <div class="lr"><div class="ll" style="border-top:1.5px solid rgba(56,189,248,0.55)"></div>Submarine Cable</div>
+      <div class="lr"><div class="ll" style="border-top:1px dashed rgba(129,140,248,0.4)"></div>Terrestrial BGP</div>
+    </div>
+
+    <div id="sim-overlay"><canvas id="sim-cv"></canvas></div>
+  </div>
+
+  <!-- ── SIDEBAR (30%) ── -->
+  <div id="sidebar">
+
+    <!-- A: Metrics -->
+    <div class="sec">
+      <div class="slabel">▸ A &nbsp; NETWORK INTELLIGENCE</div>
+      <div class="mgrid">
+        <div class="mc hi"><div class="mv" id="m-ixp">—</div><div class="ml">IXPs GLOBALLY</div></div>
+        <div class="mc hi"><div class="mv" id="m-asn">74K+</div><div class="ml">ACTIVE ASNs</div></div>
+        <div class="mc"><div class="mv" id="m-cable">530+</div><div class="ml">SUBMARINE CABLES</div></div>
+        <div class="mc"><div class="mv danger" id="m-conc">—</div><div class="ml">TRAFFIC VIA TOP 5 IXPs</div></div>
+      </div>
+    </div>
+
+    <!-- B: Why This Matters -->
+    <div class="sec">
+      <div class="slabel">▸ B &nbsp; WHY THIS MATTERS</div>
+      <p class="prose">
+        The internet's physical layer is <strong>far more concentrated than it appears.</strong>
+        Behind every "cloud" service sits a handful of critical exchange points — massive physical
+        facilities where thousands of networks swap traffic.<br><br>
+        A disruption at a single major IXP like <strong>DE-CIX Frankfurt</strong> or
+        <strong>AMS-IX Amsterdam</strong> can degrade connectivity for hundreds of millions of users
+        across multiple continents. Builders and allocators need to understand where the real
+        leverage points are — and who controls them.
+      </p>
+      <div class="cbar">
+        <div class="cbrow"><span>Path Concentration Risk</span><span id="risk-label">—</span></div>
+        <div class="ctrack"><div class="cfill" id="risk-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- C: Who Controls -->
+    <div class="sec">
+      <div class="slabel">▸ C &nbsp; WHO CONTROLS THE RAIL</div>
+      <p class="prose" style="margin-bottom:9px">Top IXPs by peak traffic throughput.</p>
+      <div id="entity-list"></div>
+    </div>
+
+    <!-- D: Filters & Controls -->
+    <div class="sec">
+      <div class="slabel">▸ D &nbsp; FILTERS &amp; CONTROLS</div>
+      <div class="fgrid">
+        <button class="fb on" data-l="ixp" onclick="toggle(this)">◈ IXP Nodes</button>
+        <button class="fb on" data-l="cable" onclick="toggle(this)">≋ Submarine Cables</button>
+        <button class="fb on" data-l="bgp" onclick="toggle(this)">─ Terrestrial BGP</button>
+        <button class="fb" data-l="t1" onclick="toggle(this)">T1 ASN Paths</button>
+      </div>
+
+      <!-- ASN Table -->
+      <div style="margin-top:12px">
+        <div class="slabel" style="margin-bottom:4px">▸ TOP ASNs BY PREFIX COUNT</div>
+        <table class="at">
+          <thead><tr><th>ASN</th><th>Organization</th><th>Prefixes</th><th>Tier</th></tr></thead>
+          <tbody id="asn-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Simulation -->
+      <div style="margin-top:12px">
+        <div class="slabel" style="margin-bottom:4px">▸ ROUTE FAILURE SIMULATION</div>
+        <p class="prose" style="margin-bottom:4px">Simulate a major IXP outage and visualise BGP re-routing cascades.</p>
+        <button class="simbtn" onclick="runSim()">⚠ SIMULATE DE-CIX FRANKFURT FAILURE</button>
+        <div id="simst"></div>
+      </div>
+    </div>
+
+    <!-- E: Download -->
+    <button id="dlbtn" onclick="download()">↓ &nbsp;DOWNLOAD SAMPLE DATA (JSON)</button>
+
+    <div id="apist">API: <span id="api-source">connecting...</span></div>
+
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+const L = {ixp:true, cable:true, bgp:true, t1:false};
+let IXPs=[], ASNs=[], CABLES=[], hovered=null, simOn=false;
+let W=0, H=0, raf=null;
+const canvas = document.getElementById('map');
+const ctx    = canvas.getContext('2d');
+
+// ══════════════════════════════════════════════════════
+// FALLBACK DATA (used if API is not reachable)
+// ══════════════════════════════════════════════════════
+const FALLBACK_IXPS = [
+  {id:1,name:'DE-CIX Frankfurt',city:'Frankfurt',country:'DE',lat:50.11,lon:8.68,member_count:1000,traffic_peak_tbps:12.6,tier:1},
+  {id:2,name:'AMS-IX Amsterdam',city:'Amsterdam',country:'NL',lat:52.37,lon:4.90,member_count:953,traffic_peak_tbps:10.3,tier:1},
+  {id:3,name:'LINX London',city:'London',country:'GB',lat:51.51,lon:-0.09,member_count:900,traffic_peak_tbps:8.8,tier:1},
+  {id:4,name:'NYIIX New York',city:'New York',country:'US',lat:40.71,lon:-74.01,member_count:400,traffic_peak_tbps:7.4,tier:1},
+  {id:5,name:'Equinix IX Chicago',city:'Chicago',country:'US',lat:41.88,lon:-87.63,member_count:320,traffic_peak_tbps:6.0,tier:1},
+  {id:6,name:'JPIX Tokyo',city:'Tokyo',country:'JP',lat:35.69,lon:139.69,member_count:500,traffic_peak_tbps:5.0,tier:1},
+  {id:7,name:'Netnod Stockholm',city:'Stockholm',country:'SE',lat:59.33,lon:18.07,member_count:280,traffic_peak_tbps:3.5,tier:2},
+  {id:8,name:'MSK-IX Moscow',city:'Moscow',country:'RU',lat:55.75,lon:37.62,member_count:520,traffic_peak_tbps:4.1,tier:2},
+  {id:9,name:'Equinix IX Singapore',city:'Singapore',country:'SG',lat:1.35,lon:103.82,member_count:410,traffic_peak_tbps:4.8,tier:1},
+  {id:10,name:'MIX Milano',city:'Milan',country:'IT',lat:45.46,lon:9.19,member_count:235,traffic_peak_tbps:2.2,tier:2},
+  {id:11,name:'PCH Sydney',city:'Sydney',country:'AU',lat:-33.87,lon:151.21,member_count:190,traffic_peak_tbps:1.9,tier:2},
+  {id:12,name:'LAIIX Los Angeles',city:'Los Angeles',country:'US',lat:34.05,lon:-118.24,member_count:280,traffic_peak_tbps:3.1,tier:2},
+  {id:13,name:'PTT São Paulo',city:'São Paulo',country:'BR',lat:-23.55,lon:-46.63,member_count:340,traffic_peak_tbps:2.8,tier:2},
+  {id:14,name:'JINX Johannesburg',city:'Johannesburg',country:'ZA',lat:-26.20,lon:28.04,member_count:80,traffic_peak_tbps:0.4,tier:3},
+  {id:15,name:'DE-CIX Mumbai',city:'Mumbai',country:'IN',lat:19.08,lon:72.88,member_count:180,traffic_peak_tbps:1.6,tier:2},
+  {id:16,name:'FICIX Helsinki',city:'Helsinki',country:'FI',lat:60.17,lon:24.94,member_count:110,traffic_peak_tbps:0.8,tier:3},
+  {id:17,name:'PLIX Warsaw',city:'Warsaw',country:'PL',lat:52.23,lon:21.01,member_count:130,traffic_peak_tbps:0.9,tier:3},
+];
+const FALLBACK_ASNS = [
+  {asn:7922,org:'Comcast',prefixes:7100,tier:'T1',country:'US'},
+  {asn:1299,org:'Telia',prefixes:5800,tier:'T1',country:'SE'},
+  {asn:3356,org:'Lumen (L3)',prefixes:5500,tier:'T1',country:'US'},
+  {asn:2914,org:'NTT Communications',prefixes:5200,tier:'T1',country:'JP'},
+  {asn:1221,org:'Telstra',prefixes:4800,tier:'T1',country:'AU'},
+  {asn:6939,org:'Hurricane Electric',prefixes:4400,tier:'T1',country:'US'},
+  {asn:3257,org:'GTT',prefixes:3900,tier:'T2',country:'US'},
+  {asn:6453,org:'TATA Comms',prefixes:3600,tier:'T2',country:'IN'},
+];
+const FALLBACK_CABLES = [
+  {name:'AEConnect-1',from:[40.71,-74.01],to:[53.33,-6.25],color:'rgba(56,189,248,0.5)',w:2},
+  {name:'FLAG Atlantic-1',from:[40.71,-74.01],to:[51.50,-0.12],color:'rgba(56,189,248,0.45)',w:1.5},
+  {name:'FASTER',from:[34.05,-118.24],to:[35.69,139.69],color:'rgba(129,140,248,0.5)',w:2},
+  {name:'SEA-ME-WE 4',from:[50.11,8.68],to:[1.35,103.82],color:'rgba(56,189,248,0.45)',w:2},
+  {name:'WACS',from:[51.50,-0.12],to:[-33.92,18.42],color:'rgba(245,158,11,0.4)',w:1.2},
+  {name:'ARCOS-1',from:[40.71,-74.01],to:[-23.55,-46.63],color:'rgba(245,158,11,0.4)',w:1.2},
+  {name:'Australia-Japan',from:[35.69,139.69],to:[-33.87,151.21],color:'rgba(129,140,248,0.35)',w:1.2},
+  {name:'SMW-5',from:[51.50,-0.12],to:[19.08,72.88],color:'rgba(56,189,248,0.3)',w:1},
+  {name:'SJC-2',from:[34.05,-118.24],to:[1.35,103.82],color:'rgba(129,140,248,0.35)',w:1},
+  {name:'SEACOM',from:[-26.20,28.04],to:[19.08,72.88],color:'rgba(245,158,11,0.3)',w:1},
+];
+
+// ══════════════════════════════════════════════════════
+// DATA FETCH (with fallback)
+// ══════════════════════════════════════════════════════
+async function fetchData(){
+  let source = 'API';
+  try {
+    const [ixpRes, asnRes] = await Promise.all([
+      fetch('/api/ixps?limit=100'),
+      fetch('/api/asns'),
+    ]);
+    if(!ixpRes.ok || !asnRes.ok) throw new Error('API error');
+    const ixpJson = await ixpRes.json();
+    const asnJson = await asnRes.json();
+    IXPs = ixpJson.ixps.filter(x => x.lat && x.lon);
+    ASNs = asnJson.asns;
+
+    // Concentration from API intelligence layer
+    const conc = ixpJson.intelligence?.concentration;
+    if(conc){
+      document.getElementById('m-conc').textContent = (conc.concentration_pct||'—')+'%';
+      document.getElementById('risk-label').textContent = conc.risk_level||'—';
+      document.getElementById('risk-bar').style.width = Math.min(conc.concentration_pct||0,100)+'%';
+    }
+
+    // Try cables endpoint
+    try{
+      const cabRes = await fetch('/api/cables');
+      const cabJson = await cabRes.json();
+      CABLES = cabJson.features.map(f=>({
+        name: f.properties.name,
+        from: [f.geometry.coordinates[0][1], f.geometry.coordinates[0][0]],
+        to:   [f.geometry.coordinates[f.geometry.coordinates.length-1][1], f.geometry.coordinates[f.geometry.coordinates.length-1][0]],
+        color:'rgba(56,189,248,0.45)', w:1.5
+      }));
+    } catch{ CABLES = FALLBACK_CABLES; }
+
+  } catch(e){
+    source = 'mock (offline)';
+    IXPs   = FALLBACK_IXPS;
+    ASNs   = FALLBACK_ASNS;
+    CABLES = FALLBACK_CABLES;
+    // compute concentration locally
+    const total = IXPs.reduce((s,x)=>s+x.traffic_peak_tbps,0);
+    const top5  = [...IXPs].sort((a,b)=>b.traffic_peak_tbps-a.traffic_peak_tbps).slice(0,5).reduce((s,x)=>s+x.traffic_peak_tbps,0);
+    const pct   = Math.round(top5/total*100);
+    document.getElementById('m-conc').textContent = pct+'%';
+    document.getElementById('risk-label').textContent = pct>70?'CRITICAL':'HIGH';
+    document.getElementById('risk-bar').style.width = pct+'%';
+  }
+
+  document.getElementById('api-source').textContent = source;
+  document.getElementById('m-ixp').textContent = IXPs.length+'+';
+  buildEntityList();
+  buildASNTable();
+  document.getElementById('loading').style.display='none';
+  animate();
+}
+
+// ══════════════════════════════════════════════════════
+// SIDEBAR BUILDERS
+// ══════════════════════════════════════════════════════
+function buildEntityList(){
+  const sorted = [...IXPs].sort((a,b)=>b.traffic_peak_tbps-a.traffic_peak_tbps).slice(0,7);
+  const max = sorted[0]?.traffic_peak_tbps||1;
+  const colors = ['rgba(56,189,248,0.7)','rgba(56,189,248,0.55)','rgba(129,140,248,0.65)',
+                   'rgba(129,140,248,0.5)','rgba(245,158,11,0.6)','rgba(245,158,11,0.45)','rgba(100,116,139,0.5)'];
+  const el = document.getElementById('entity-list');
+  el.innerHTML = sorted.map((ix,i)=>`
+    <div class="entity">
+      <span class="en">${ix.name}</span>
+      <div class="eb"><div class="ef" style="width:${Math.round(ix.traffic_peak_tbps/max*100)}%;background:${colors[i]||colors[6]}"></div></div>
+      <span class="ep">${ix.traffic_peak_tbps} Tbps</span>
+    </div>`).join('');
+}
+
+function buildASNTable(){
+  const tbody = document.getElementById('asn-body');
+  tbody.innerHTML = ASNs.map(a=>{
+    const pfx = a.prefixes_v4||a.prefixes||0;
+    const tier = a.tier||'T2';
+    return `<tr>
+      <td>AS${a.asn}</td>
+      <td>${a.org||a.organization||'—'}</td>
+      <td>${pfx?Math.round(pfx/1000)+'K':'—'}</td>
+      <td><span class="badge ${tier==='T1'?'t1b':'t2b'}">${tier}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// MAP ENGINE
+// ══════════════════════════════════════════════════════
+function resize(){
+  const el = document.getElementById('stage');
+  W = el.clientWidth; H = el.clientHeight;
+  canvas.width=W; canvas.height=H;
+  const sc = document.getElementById('sim-cv');
+  sc.width=W; sc.height=H;
+}
+
+function proj(lat,lon){
+  const x = (lon+180)/360*W;
+  const r = lat*Math.PI/180;
+  const n = Math.log(Math.tan(Math.PI/4+r/2));
+  const y = (Math.PI-n)/(2*Math.PI)*H;
+  return {x,y};
+}
+
+function arc(ctx,from,to,color,w){
+  const steps=60;
+  ctx.beginPath(); ctx.strokeStyle=color; ctx.lineWidth=w;
+  for(let i=0;i<=steps;i++){
+    const t=i/steps;
+    const p=proj(from[0]+(to[0]-from[0])*t, from[1]+(to[1]-from[1])*t);
+    i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);
+  }
+  ctx.stroke();
+}
+
+function drawBase(){
+  ctx.fillStyle='#030712'; ctx.fillRect(0,0,W,H);
+
+  // Grid
+  ctx.strokeStyle='rgba(31,41,55,0.35)'; ctx.lineWidth=0.3;
+  for(let lon=-150;lon<=180;lon+=30){const a=proj(-80,lon),b=proj(80,lon);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
+  for(let lat=-60;lat<=70;lat+=30){const a=proj(lat,-180),b=proj(lat,180);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
+
+  // Continents
+  [
+    [[70,-140],[70,-60],[25,-60],[15,-90],[30,-110],[50,-125],[70,-140]],
+    [[10,-80],[10,-50],[-55,-65],[-55,-70],[-20,-70],[0,-50],[10,-80]],
+    [[71,5],[71,40],[35,35],[35,5],[45,-10],[55,-10],[60,0],[71,5]],
+    [[35,5],[35,50],[10,50],[-35,20],[-35,15],[10,-20],[35,5]],
+    [[70,40],[70,140],[35,140],[0,100],[20,60],[40,40],[70,40]],
+    [[35,70],[10,100],[0,110],[0,80],[10,70],[35,70]],
+    [[-10,115],[-10,155],[-40,155],[-40,115],[-10,115]],
+  ].forEach(pts=>{
+    ctx.beginPath();
+    const f=proj(pts[0][0],pts[0][1]); ctx.moveTo(f.x,f.y);
+    pts.slice(1).forEach(p=>{const pp=proj(p[0],p[1]);ctx.lineTo(pp.x,pp.y);});
+    ctx.closePath(); ctx.fillStyle='#0C1822'; ctx.fill();
+    ctx.strokeStyle='#1A2D40'; ctx.lineWidth=0.5; ctx.stroke();
+  });
+}
+
+function drawFrame(){
+  drawBase();
+
+  // Cables
+  if(L.cable) CABLES.forEach(c=>arc(ctx,c.from,c.to,c.color,c.w));
+
+  // BGP backbone
+  if(L.bgp){
+    const links=[
+      [[50.11,8.68],[52.37,4.90]],[[52.37,4.90],[51.51,-0.09]],
+      [[50.11,8.68],[45.46,9.19]],[[50.11,8.68],[55.75,37.62]],
+      [[50.11,8.68],[59.33,18.07]],[[40.71,-74.01],[41.88,-87.63]],
+      [[40.71,-74.01],[34.05,-118.24]],[[41.88,-87.63],[34.05,-118.24]],
+    ];
+    ctx.setLineDash([4,4]); ctx.strokeStyle='rgba(129,140,248,0.22)'; ctx.lineWidth=0.8;
+    links.forEach(([a,b])=>{const pa=proj(a[0],a[1]),pb=proj(b[0],b[1]);ctx.beginPath();ctx.moveTo(pa.x,pa.y);ctx.lineTo(pb.x,pb.y);ctx.stroke();});
+    ctx.setLineDash([]);
+  }
+
+  // T1 paths
+  if(L.t1){
+    const paths=[[[40.71,-74.01],[50.11,8.68]],[[40.71,-74.01],[35.69,139.69]],[[50.11,8.68],[1.35,103.82]]];
+    ctx.setLineDash([2,7]);
+    paths.forEach(([a,b])=>arc(ctx,a,b,'rgba(56,189,248,0.12)',0.8));
+    ctx.setLineDash([]);
+  }
+
+  // IXP nodes
+  if(L.ixp){
+    const now=Date.now();
+    IXPs.forEach(ix=>{
+      const p=proj(ix.lat,ix.lon);
+      const isH=hovered&&hovered.id===ix.id;
+      const r=ix.tier===1?6:ix.tier===2?4:3;
+      const col=ix.tier===1?'#38BDF8':ix.tier===2?'#818CF8':'#F59E0B';
+
+      // Glow
+      if(ix.tier===1||isH){
+        ctx.beginPath(); ctx.arc(p.x,p.y,r*4.5,0,Math.PI*2);
+        ctx.fillStyle=col+'22'; ctx.fill();
+      }
+      // Pulse ring
+      if(ix.tier===1){
+        const t=(now%2200)/2200;
+        ctx.beginPath(); ctx.arc(p.x,p.y,r+6+t*10,0,Math.PI*2);
+        ctx.strokeStyle=col+Math.round((1-t)*80).toString(16).padStart(2,'0');
+        ctx.lineWidth=0.8; ctx.stroke();
+      }
+      // Node
+      ctx.beginPath(); ctx.arc(p.x,p.y,isH?r*1.6:r,0,Math.PI*2);
+      ctx.fillStyle=col; ctx.fill();
+      if(isH){
+        ctx.beginPath(); ctx.arc(p.x,p.y,r*2.5,0,Math.PI*2);
+        ctx.strokeStyle=col+'66'; ctx.lineWidth=1; ctx.stroke();
+      }
+    });
+  }
+
+  // Simulation overlay
+  if(simOn) drawSim();
+}
+
+function drawSim(){
+  const src=proj(50.11,8.68);
+  const t=(Date.now()%1400)/1400;
+  ctx.beginPath(); ctx.arc(src.x,src.y,8+t*70,0,Math.PI*2);
+  ctx.strokeStyle=`rgba(239,68,68,${0.85*(1-t)})`; ctx.lineWidth=2; ctx.stroke();
+
+  const targets=[IXPs.find(x=>x.id===2),IXPs.find(x=>x.id===3),IXPs.find(x=>x.id===7)].filter(Boolean);
+  const off=(Date.now()%900)/900;
+  targets.forEach(r=>{
+    const dst=proj(r.lat,r.lon);
+    ctx.beginPath(); ctx.moveTo(src.x,src.y); ctx.lineTo(dst.x,dst.y);
+    ctx.setLineDash([6,4]); ctx.lineDashOffset=-off*20;
+    ctx.strokeStyle='rgba(239,68,68,0.55)'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.setLineDash([]);
+  });
+  // X mark
+  ctx.strokeStyle='#EF4444'; ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(src.x-9,src.y-9);ctx.lineTo(src.x+9,src.y+9);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(src.x+9,src.y-9);ctx.lineTo(src.x-9,src.y+9);ctx.stroke();
+}
+
+function animate(){
+  drawFrame();
+  raf=requestAnimationFrame(animate);
+}
+
+// ══════════════════════════════════════════════════════
+// INTERACTION
+// ══════════════════════════════════════════════════════
+function nearestIXP(mx,my){
+  for(const ix of IXPs){
+    const p=proj(ix.lat,ix.lon);
+    if(Math.hypot(mx-p.x,my-p.y)<14) return ix;
+  }
+  return null;
+}
+
+canvas.addEventListener('mousemove',e=>{
+  const r=canvas.getBoundingClientRect();
+  const mx=e.clientX-r.left, my=e.clientY-r.top;
+  const ix=nearestIXP(mx,my);
+  const tip=document.getElementById('tip');
+  if(ix){
+    hovered=ix;
+    document.getElementById('tt-name').textContent=ix.name;
+    document.getElementById('tt-body').innerHTML=`
+      <div class="tr"><span>Country</span><span>${ix.country}</span></div>
+      <div class="tr"><span>Members</span><span>${ix.member_count}+ networks</span></div>
+      <div class="tr"><span>Peak Traffic</span><span>${ix.traffic_peak_tbps} Tbps</span></div>
+      <div class="tr"><span>Tier</span><span>T${ix.tier}</span></div>`;
+    let tx=mx+16, ty=my-14;
+    if(tx+200>W) tx=mx-210;
+    tip.style.left=tx+'px'; tip.style.top=ty+'px'; tip.style.opacity='1';
+  } else {
+    hovered=null; tip.style.opacity='0';
+  }
+});
+canvas.addEventListener('mouseleave',()=>{hovered=null;document.getElementById('tip').style.opacity='0';});
+
+function toggle(btn){
+  const k=btn.dataset.l;
+  L[k]=!L[k];
+  btn.classList.toggle('on',L[k]);
+}
+
+// ══════════════════════════════════════════════════════
+// SIMULATION
+// ══════════════════════════════════════════════════════
+async function runSim(){
+  simOn=!simOn;
+  const btn=document.querySelector('.simbtn');
+  const st=document.getElementById('simst');
+  if(simOn){
+    btn.textContent='■ STOP SIMULATION';
+    btn.style.borderColor='rgba(245,158,11,0.5)'; btn.style.color='var(--amber)';
+    // Fetch from API
+    try{
+      const r=await fetch('/api/simulate/failure?ixp_id=1');
+      const d=await r.json();
+      st.className='show';
+      st.innerHTML=`⚠ ${d.failed_node} OFFLINE — Impact: ${d.impact_level}<br>
+        <span style="color:var(--muted)">~${d.affected_routes_estimate.toLocaleString()} routes affected · BGP re-convergence ~${d.bgp_reconvergence_estimate_sec}s · Rerouting via: ${d.reroute_candidates.join(', ')}</span>`;
+    }catch{
+      st.className='show';
+      st.innerHTML='⚠ DE-CIX FRANKFURT OFFLINE — BGP re-convergence in progress';
+    }
+  } else {
+    simOn=false;
+    btn.textContent='⚠ SIMULATE DE-CIX FRANKFURT FAILURE';
+    btn.style.borderColor='rgba(239,68,68,0.45)'; btn.style.color='var(--red)';
+    st.className='';
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// DOWNLOAD
+// ══════════════════════════════════════════════════════
+function download(){
+  window.location.href='/api/download/sample';
+}
+
+// ══════════════════════════════════════════════════════
+// CLOCK
+// ══════════════════════════════════════════════════════
+function tick(){document.getElementById('ts').textContent=new Date().toUTCString().slice(17,25)+' UTC';}
+setInterval(tick,1000); tick();
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+window.addEventListener('resize',()=>{resize();});
+resize();
+fetchData();
+</script>
+</body>
+</html>
