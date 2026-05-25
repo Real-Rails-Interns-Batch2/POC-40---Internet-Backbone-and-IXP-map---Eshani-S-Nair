@@ -31,7 +31,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-MOCK_DATA_PATH = Path(__file__).parent / "mock_data.json"
+MOCK_DATA_PATHS = [
+    Path(__file__).parent / "mock_data.json",
+    Path(__file__).parent / "real-rails-nextjs" / "src" / "lib" / "mock_data.json",
+]
 FRONTEND_PATH  = Path(__file__).parent / "frontend.html"
 PEERINGDB_BASE = "https://www.peeringdb.com/api"
 RIPESTAT_BASE  = "https://stat.ripe.net/data"
@@ -39,8 +42,18 @@ RIPESTAT_BASE  = "https://stat.ripe.net/data"
 
 # ── MOCK FALLBACK ──────────────────────────────────────────────────────────────
 def load_mock() -> dict:
-    with open(MOCK_DATA_PATH) as f:
-        return json.load(f)
+    for path in MOCK_DATA_PATHS:
+        if path.exists():
+            with open(path) as f:
+                return json.load(f)
+    raise FileNotFoundError("No mock_data.json file was found for fallback data.")
+
+
+def resolve_mock_data_path() -> Path:
+    for path in MOCK_DATA_PATHS:
+        if path.exists():
+            return path
+    raise FileNotFoundError("No mock_data.json file was found for fallback data.")
 
 
 # ── HELPERS ───────────────────────────────────────────────────────────────────
@@ -97,6 +110,9 @@ async def get_ixps(
 ):
     """Fetch IXP list — PeeringDB live, falls back to mock_data.json."""
     try:
+        mock = load_mock()
+        mock_map = {x["name"]: x for x in mock.get("ixps", [])}
+
         async with httpx.AsyncClient(timeout=8.0) as client:
             params = {"limit": limit}
             if country:
@@ -105,8 +121,6 @@ async def get_ixps(
             resp.raise_for_status()
             raw_list = resp.json().get("data", [])
             # PeeringDB records won't have lat/lon directly; merge from mock for coords
-            mock = load_mock()
-            mock_map = {x["name"]: x for x in mock.get("ixps", [])}
             for r in raw_list:
                 name = r.get("name", "")
                 if name in mock_map:
@@ -114,10 +128,13 @@ async def get_ixps(
                     r.setdefault("lon", mock_map[name].get("lon"))
                     r.setdefault("traffic_peak_tbps", mock_map[name].get("traffic_peak_tbps"))
     except Exception:
-        mock = load_mock()
-        raw_list = mock.get("ixps", [])
-        for r in raw_list:
-            r["source"] = "mock"
+        try:
+            mock = load_mock()
+            raw_list = mock.get("ixps", [])
+            for r in raw_list:
+                r["source"] = "mock"
+        except Exception:
+            raise HTTPException(status_code=503, detail="Unable to load fallback IXP data")
 
     enriched = [enrich_ixp(r) for r in raw_list]
     if tier:
@@ -147,25 +164,45 @@ async def get_asns(asn_list: Optional[str] = Query(None)):
     default_asns = [7922, 1299, 3356, 2914, 1221, 6939, 3257, 6453]
     asns = [int(a) for a in asn_list.split(",")] if asn_list else default_asns
     results = []
-    async with httpx.AsyncClient(timeout=10.0) as client:
+    mock = None
+    try:
+        mock = load_mock()
+        mock_map = {x.get("asn"): x for x in mock.get("asns", [])}
+    except Exception:
+        mock_map = {}
+
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            for asn in asns:
+                try:
+                    url = f"{RIPESTAT_BASE}/routing-status/data.json?resource=AS{asn}"
+                    resp = await client.get(url)
+                    resp.raise_for_status()
+                    d = resp.json().get("data", {})
+                    results.append({
+                        "asn": asn,
+                        "prefixes_v4": d.get("announced_space", {}).get("v4", {}).get("prefixes", 0),
+                        "prefixes_v6": d.get("announced_space", {}).get("v6", {}).get("prefixes", 0),
+                        "source": "RIPEstat",
+                    })
+                except Exception:
+                    fallback = mock_map.get(asn)
+                    if fallback is not None:
+                        fallback = dict(fallback)
+                        fallback["source"] = "mock"
+                        results.append(fallback)
+                    else:
+                        results.append({"asn": asn, "prefixes": 0, "source": "mock"})
+    except Exception:
         for asn in asns:
-            try:
-                url = f"{RIPESTAT_BASE}/routing-status/data.json?resource=AS{asn}"
-                resp = await client.get(url)
-                resp.raise_for_status()
-                d = resp.json().get("data", {})
-                results.append({
-                    "asn": asn,
-                    "prefixes_v4": d.get("announced_space", {}).get("v4", {}).get("prefixes", 0),
-                    "prefixes_v6": d.get("announced_space", {}).get("v6", {}).get("prefixes", 0),
-                    "source": "RIPEstat",
-                })
-            except Exception:
-                mock = load_mock()
-                row = next((x for x in mock.get("asns", []) if x.get("asn") == asn),
-                           {"asn": asn, "prefixes": 0})
-                row["source"] = "mock"
-                results.append(row)
+            fallback = mock_map.get(asn)
+            if fallback is not None:
+                fallback = dict(fallback)
+                fallback["source"] = "mock"
+                results.append(fallback)
+            else:
+                results.append({"asn": asn, "prefixes": 0, "source": "mock"})
+
     return {"count": len(results), "asns": results, "fetched_at": datetime.utcnow().isoformat()}
 
 
@@ -217,7 +254,10 @@ async def simulate_failure(ixp_id: Optional[int] = Query(None)):
 
 @app.get("/api/download/sample")
 async def download_sample():
-    if MOCK_DATA_PATH.exists():
-        return FileResponse(MOCK_DATA_PATH, media_type="application/json",
-                            filename="real-rails-ixp-sample.json")
-    raise HTTPException(404, "Sample data not found")
+    try:
+        path = resolve_mock_data_path()
+    except FileNotFoundError:
+        raise HTTPException(404, "Sample data not found")
+
+    return FileResponse(path, media_type="application/json",
+                        filename="real-rails-ixp-sample.json")
