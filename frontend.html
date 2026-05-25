@@ -283,6 +283,58 @@ html, body {
 .ef { height: 100%; border-radius: 2px; }
 .ep { font-size: 10px; color: var(--cyan); min-width: 50px; text-align: right; font-weight: 600; }
 
+.selected-facility {
+  margin-top: 10px;
+  padding: 10px 11px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: linear-gradient(180deg, rgba(15,23,42,0.95), rgba(15,23,42,0.8));
+}
+.sf-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: start;
+  margin-bottom: 8px;
+}
+.sf-title { font-size: 11px; font-weight: 700; color: var(--text); }
+.sf-sub { font-size: 9px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+.sf-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(56,189,248,0.35);
+  color: var(--cyan);
+  background: rgba(56,189,248,0.08);
+  font-size: 9px;
+  font-weight: 700;
+}
+.sf-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.sf-grid div {
+  padding: 7px 8px;
+  border-radius: 4px;
+  background: rgba(15,23,42,0.8);
+  border: 1px solid rgba(31,41,55,0.8);
+}
+.sf-grid span {
+  display: block;
+  font-size: 9px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+.sf-grid strong {
+  font-size: 10px;
+  color: var(--text);
+  word-break: break-word;
+}
+
 /* ── D3 Chart ── */
 #d3-chart { margin-top: 10px; }
 #d3-chart svg text { font-family: var(--font) !important; }
@@ -471,8 +523,24 @@ html, body {
     <!-- C: Who Controls the Rail -->
     <div class="sec">
       <div class="slabel">▸ C &nbsp; Who Controls the Rail</div>
-      <p class="prose" style="margin-bottom:9px">Top IXPs by peak traffic throughput. Click to open facility card.</p>
+      <p class="prose" style="margin-bottom:9px">Top IXPs by peak traffic throughput. Select a node to sync the metadata panel.</p>
       <div id="entity-list"></div>
+
+      <div id="selected-facility" class="selected-facility">
+        <div class="sf-header">
+          <div>
+            <div id="sf-title" class="sf-title">No IXP selected</div>
+            <div id="sf-sub" class="sf-sub">Click a marker or an entity row to inspect the selected exchange.</div>
+          </div>
+          <span id="sf-tier" class="sf-tag">—</span>
+        </div>
+        <div class="sf-grid">
+          <div><span>Location</span><strong id="sf-location">—</strong></div>
+          <div><span>Members</span><strong id="sf-members">—</strong></div>
+          <div><span>Peak Traffic</span><strong id="sf-traffic">—</strong></div>
+          <div><span>Traffic Share</span><strong id="sf-share">—</strong></div>
+        </div>
+      </div>
 
       <!-- D3 Concentration Chart -->
       <div id="d3-chart"></div>
@@ -790,6 +858,8 @@ function drawIXPs() {
 
 // ─── FACILITY CARD (Protocol: facility cards feature) ──
 function openFacilityCard(ix, pt) {
+  renderSelectedFacility(ix);
+
   const modal = document.getElementById('fc-modal');
   document.getElementById('fc-name').textContent = ix.name;
   document.getElementById('fc-sub').textContent  = `${ix.city}, ${ix.country} · FACILITY CARD`;
@@ -891,7 +961,22 @@ function buildEntityList() {
 
 function flyToIXP(id) {
   const ix = IXPs.find(x => x.id === id);
-  if (ix && map) map.flyTo([ix.lat, ix.lon], 5, { duration: 1.2 });
+  if (ix && map) {
+    map.flyTo([ix.lat, ix.lon], 5, { duration: 1.2 });
+    renderSelectedFacility(ix);
+  }
+}
+
+function renderSelectedFacility(ix) {
+  const totalTraffic = IXPs.reduce((s, x) => s + x.traffic_peak_tbps, 0);
+  const share = totalTraffic ? ((ix.traffic_peak_tbps / totalTraffic) * 100).toFixed(1) : '0.0';
+  document.getElementById('sf-tier').textContent = 'T' + ix.tier;
+  document.getElementById('sf-location').textContent = `${ix.city}, ${ix.country}`;
+  document.getElementById('sf-members').textContent = `${ix.member_count}+ networks`;
+  document.getElementById('sf-traffic').textContent = `${ix.traffic_peak_tbps} Tbps`;
+  document.getElementById('sf-share').textContent = `${share}%`;
+  document.getElementById('sf-title').textContent = ix.name;
+  document.getElementById('sf-sub').textContent = `Selected from ${document.getElementById('api-src').textContent.toUpperCase()} data · ${ix.website || 'No website listed'}`;
 }
 
 // ─── D3 CONCENTRATION DONUT CHART ───────────────────
