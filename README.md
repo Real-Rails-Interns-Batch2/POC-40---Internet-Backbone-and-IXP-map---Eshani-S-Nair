@@ -1,12 +1,23 @@
 # Real Rails — Internet Backbone & IXP Map
 
 ## Project Overview
-Real Rails is a FastAPI-powered IXP intelligence dashboard that serves a live-backed frontend and remains functional when upstream APIs are unavailable.
+Real Rails is a FastAPI-powered IXP intelligence dashboard that visualizes global internet infrastructure, route concentration, and resilience scenarios.
+
+### Visual Identity
+- **Background:** `#030712` (mandatory)
+- **Primary accent:** `#38BDF8`
+- **Secondary accent:** `#818CF8`
+- **Typography:** Inter / Geist Sans
+- **Effects:** subtle glassmorphism and active-state glow
+
+### Layout Protocol
+- **Main stage:** 70% width
+- **Intelligence sidebar:** 30% width
+- **Sidebar sections:** summary, why it matters, who controls the rail, filters, and download/sample data
 
 ### What the project delivers
 - A FastAPI backend with live data integration and fallback handling
 - A dashboard served from `frontend.html`
-- Side-by-side **70/30 layout** with the main stage and metadata sidebar
 - A selected-entity workflow where clicking a stage or IXP row updates the sidebar
 - Live/preview API status messaging in the UI
 - Sample data download support
