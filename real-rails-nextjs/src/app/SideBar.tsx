@@ -2,7 +2,7 @@ import IntelligencePanel from './IntelligencePanel';
 
 export default function Sidebar() {
   return (
-    <div className="sidebar" style={{ padding: '1.5rem', height: '100%', borderLeft: '1px solid rgba(56, 189, 248, 0.2)', overflowY: 'auto' }}>
+    <div className="sidebar" style={{ padding: '1.5rem', height: '100%', backgroundColor: '#030712', borderLeft: '1px solid #1F2937', overflowY: 'auto' }}>
       <h1 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: '#38BDF8' }}>
         Internet Backbone & IXP Intelligence
       </h1>
