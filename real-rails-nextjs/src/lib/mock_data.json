@@ -2,8 +2,7 @@
   "metadata": {
     "source": "Real Rails Intelligence Library — Synthetic data shaped after PeeringDB/TeleGeography schemas",
     "rail": "Data & Intelligence",
-    "generated": "2024-01-01T00:00:00Z",
-    "disclaimer": "For production use, fetch live from PeeringDB API and license TeleGeography data."
+    "generated": "2024-01-01T00:00:00Z"
   },
   "ixps": [
     {"id":1,"name":"DE-CIX Frankfurt","city":"Frankfurt","country":"DE","lat":50.11,"lon":8.68,"member_count":1000,"traffic_peak_tbps":12.6,"tier":1},
@@ -31,9 +30,9 @@
     {"name":"AEConnect-1","length_km":13500,"rfs":"2016","owners":["Aqua Comms"],"endpoints":[[40.71,-74.01],[53.33,-6.25]]},
     {"name":"FLAG Atlantic-1","length_km":14000,"rfs":"2001","owners":["Reliance Globalcom"],"endpoints":[[40.71,-74.01],[51.50,-0.12]]},
     {"name":"FASTER","length_km":9000,"rfs":"2016","owners":["Google","China Mobile","SoftBank"],"endpoints":[[34.05,-118.24],[35.69,139.69]]},
-    {"name":"SEA-ME-WE 4","length_km":18800,"rfs":"2005","owners":["Consortium of 16 carriers"],"endpoints":[[51.50,-0.12],[1.35,103.82]]},
+    {"name":"SEA-ME-WE 4","length_km":18800,"rfs":"2005","owners":["Consortium"],"endpoints":[[51.50,-0.12],[1.35,103.82]]},
     {"name":"WACS","length_km":14530,"rfs":"2012","owners":["MTN","Orange","Vodacom"],"endpoints":[[51.50,-0.12],[-33.92,18.42]]},
     {"name":"ARCOS-1","length_km":8600,"rfs":"2001","owners":["ARCOS"],"endpoints":[[40.71,-74.01],[-23.55,-46.63]]},
-    {"name":"Australia-Japan Cable","length_km":12700,"rfs":"2001","owners":["Telstra","Optus","KDDI"],"endpoints":[[35.69,139.69],[-33.87,151.21]]}
+    {"name":"Australia-Japan Cable","length_km":12700,"rfs":"2001","owners":["Telstra","KDDI"],"endpoints":[[35.69,139.69],[-33.87,151.21]]}
   ]
 }

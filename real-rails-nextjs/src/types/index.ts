@@ -1,6 +1,3 @@
-// Real Rails — Type Definitions
-// Document 3: TypeScript required
-
 export interface IXP {
   id: number;
   name: string;
@@ -30,7 +27,7 @@ export interface ASN {
 
 export interface SubmarineCable {
   name: string;
-  from: [number, number]; // [lat, lon]
+  from: [number, number];
   to: [number, number];
   color: string;
   w: number;
@@ -78,5 +75,4 @@ export interface LayerState {
   t1: boolean;
 }
 
-// Data sources — Document 3
 export type DataSource = "PeeringDB" | "RIPEstat" | "TeleGeography" | "mock";
