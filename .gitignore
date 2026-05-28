@@ -19,13 +19,14 @@ backend/.venv/
 # ==========================================
 # Local Configuration and Secrets (CRITICAL)
 # ==========================================
-# Blocks actual environment secrets at root, backend, and frontend
+# Blocks actual environment secrets and templates everywhere
 .env
 .env.local
+.env.example
 .env.development.local
 .env.test.local
 .env.production.local
-*.env
+*.env*
 backend/.env
 frontend/real-rails-nextjs/.env.local
 
