@@ -31,15 +31,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# BEFORE (old paths — will break):
 MOCK_DATA_PATHS = [
     Path(__file__).parent / "mock_data.json",
     Path(__file__).parent / "real-rails-nextjs" / "src" / "lib" / "mock_data.json",
 ]
-FRONTEND_PATH  = Path(__file__).parent / "frontend.html"
+FRONTEND_PATH = Path(__file__).parent / "frontend.html"
+
+# AFTER (new paths — correct for backend/ folder):
+MOCK_DATA_PATHS = [
+    Path(__file__).parent / "mock_data.json",
+]
+FRONTEND_PATH = Path(__file__).parent / "frontend.html"
 PEERINGDB_BASE = "https://www.peeringdb.com/api"
 RIPESTAT_BASE  = "https://stat.ripe.net/data"
-
-
 # ── MOCK FALLBACK ──────────────────────────────────────────────────────────────
 def load_mock() -> dict:
     for path in MOCK_DATA_PATHS:

@@ -29,7 +29,15 @@ Implements a rigid **2-Column Split Layout** (`v-screen h-screen overflow-hidden
 
 ---
 
-## 🛠 Tech Stack & Core Libraries
+## 📂 Project Structure
+
+```text
+├── frontend/              # Next.js 14 App (UI & Geospatial Engine)
+├── backend/               # FastAPI Server (Data Orchestration)
+└── docs/                  # Intelligence Library & Documentation
+```
+
+##  Tech Stack & Core Libraries
 
 * **Framework:** Next.js 14 (App Router) with TypeScript
 * **Styling:** Tailwind CSS + `shadcn/ui` components (custom-themed to Real Rails specs)
@@ -61,10 +69,22 @@ Data feeds are synthesized and structured directly from major telecommunication 
 ## 🚀 Local Development Setup
 
 ### Prerequisites
-Ensure you have Node.js (v18.x or later) installed.
+Ensure you have Node.js (v18.x+) and Python (3.9+) installed.
 
-### 1. Installation
-Clone the repository, navigate into the project directory, and install dependencies:
+### 1. Frontend Setup (Next.js)
 ```bash
-cd "C:\Users\eshan\Documents\Sinternship-S6\Internet - backbone ixp map\real-rails-nextjs"
+cd frontend
 npm install
+npm run dev
+```
+
+### 2. Backend Setup (FastAPI)
+Create a virtual environment to isolate dependencies:
+```bash
+cd backend
+python -m venv venv
+# Activate on Windows:
+.\venv\Scripts\activate
+# Activate on Mac/Linux:
+source venv/bin/activate
+pip install -r requirements.txt

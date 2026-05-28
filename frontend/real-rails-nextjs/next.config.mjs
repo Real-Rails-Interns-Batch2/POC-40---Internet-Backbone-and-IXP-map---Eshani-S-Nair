@@ -10,8 +10,11 @@ const nextConfig = {
     return config;
   },
   async rewrites() {
-  return [{ source: '/api/:path*', destination: 'http://127.0.0.1:8000/api/:path*' }]
-}
+    return [
+      { source: '/api/:path*', destination: 'http://127.0.0.1:8000/api/:path*' },
+    ];
+  },
+  transpilePackages: ["leaflet", "react-leaflet"],
 };
 
 export default nextConfig;
