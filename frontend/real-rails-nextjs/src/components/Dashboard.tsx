@@ -86,12 +86,12 @@ const MOCK_ASNS: ASN[] = [
   {asn:6453, org:"TATA Communications", prefixes:3600, tier:"T2", country:"IN"},
 ];
 const MOCK_CABLES: Cable[] = [
-  {name:"AEConnect-1",     from:[40.71,-74.01], to:[53.33,-6.25],   color:"#38BDF8", w:2.2},
-  {name:"FLAG Atlantic-1", from:[40.71,-74.01], to:[51.50,-0.12],   color:"#38BDF8", w:1.8},
-  {name:"TAT-14",          from:[38.90,-77.04], to:[52.37,4.90],    color:"#38BDF8", w:1.5},
-  {name:"FASTER",          from:[34.05,-118.24],to:[35.69,139.69],  color:"#818CF8", w:2.2},
-  {name:"UNITY",           from:[33.75,-118.19],to:[35.69,139.69],  color:"#818CF8", w:1.8},
-  {name:"SJC-2",           from:[34.05,-118.24],to:[1.35,103.82],   color:"#818CF8", w:1.5},
+  {name:"AEConnect-1",     from:[40.71,-74.01], to:[53.33,-6.25],   color:"#475569", w:2.2},
+  {name:"FLAG Atlantic-1", from:[40.71,-74.01], to:[51.50,-0.12],   color:"#475569", w:1.8},
+  {name:"TAT-14",          from:[38.90,-77.04], to:[52.37,4.90],    color:"#475569", w:1.5},
+  {name:"FASTER",          from:[34.05,-118.24],to:[35.69,139.69],  color:"#334155", w:2.2},
+  {name:"UNITY",           from:[33.75,-118.19],to:[35.69,139.69],  color:"#334155", w:1.8},
+  {name:"SJC-2",           from:[34.05,-118.24],to:[1.35,103.82],   color:"#334155", w:1.5},
   {name:"SEA-ME-WE 4",     from:[50.11,8.68],   to:[1.35,103.82],   color:"#38BDF8", w:2.2},
   {name:"SMW-5",           from:[51.50,-0.12],  to:[19.08,72.88],   color:"#38BDF8", w:1.5},
   {name:"WACS",            from:[51.50,-0.12],  to:[-33.92,18.42],  color:"#F59E0B", w:1.8},
@@ -234,7 +234,7 @@ export default function Dashboard() {
       });
       mapInstance.current = map;
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
         attribution: "", maxZoom: 18,
       }).addTo(map);
 
@@ -273,7 +273,7 @@ export default function Dashboard() {
           [[40.71,-74.01],[34.05,-118.24]], [[41.88,-87.63],[34.05,-118.24]],
         ];
         links.forEach(([a,b]) => {
-          L.polyline([a, b], { color: "#818CF8", weight: 1.5, opacity: 0.7, dashArray: "6 5" }).addTo(bgpLayer);
+          L.polyline([a, b], { color: "#475569", weight: 1.5, opacity: 0.7, dashArray: "6 5" }).addTo(bgpLayer);
         });
       }
 
@@ -375,7 +375,7 @@ export default function Dashboard() {
       { label: "All Others", value: othersSum },
     ];
     const W = 230, H = 130, R = 52, innerR = 30;
-    const colors = ["#38BDF8","#4FC3F7","#818CF8","#A5B4FC","#F59E0B","#374151"];
+    const colors = ["#38BDF8","#818CF8","#F59E0B","#22C55E","#EF4444","#64748B"];
     const svg = d3.select(d3Ref.current).append("svg").attr("width", W).attr("height", H).style("overflow","visible");
     const g   = svg.append("g").attr("transform", `translate(${H/2+8},${H/2})`);
     const pie = d3.pie<{label:string;value:number}>().value(d => d.value).sort(null);
